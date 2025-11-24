@@ -187,8 +187,9 @@ def render_sidebar():
                 
                 categories = {}
                 for email_id, processed in st.session_state.processed_emails.items():
-                    cat = processed.get('category', {}).get('category', 'Unknown')
-                    categories[cat] = categories.get(cat, 0) + 1
+                    if processed and isinstance(processed, dict):
+                        cat = processed.get('category', {}).get('category', 'Unknown') if isinstance(processed.get('category'), dict) else 'Unknown'
+                        categories[cat] = categories.get(cat, 0) + 1
                 
                 st.metric("Total Emails", len(st.session_state.inbox))
                 st.metric("Processed", len(st.session_state.processed_emails))
