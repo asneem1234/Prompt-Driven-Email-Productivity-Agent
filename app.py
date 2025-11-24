@@ -80,7 +80,7 @@ def initialize_app():
     """Initialize the application with API key"""
     try:
         # Set environment variable
-        os.environ['OPENAI_API_KEY'] = st.session_state.api_key
+        os.environ['GEMINI_API_KEY'] = st.session_state.api_key
         
         # Initialize components
         st.session_state.llm_client = LLMClient()
@@ -144,10 +144,10 @@ def render_sidebar():
         if not st.session_state.initialized:
             st.markdown("#### 🔑 Setup")
             api_key = st.text_input(
-                "OpenAI API Key",
+                "Google Gemini API Key",
                 type="password",
                 value=st.session_state.api_key,
-                help="Enter your OpenAI API key to get started"
+                help="Get free API key from: https://makersuite.google.com/app/apikey"
             )
             st.session_state.api_key = api_key
             

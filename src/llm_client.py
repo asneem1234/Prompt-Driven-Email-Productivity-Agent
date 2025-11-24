@@ -1,11 +1,11 @@
 """
 LLM Client for Email Productivity Agent
-Supports OpenAI and other LLM providers
+Supports Google Gemini AI
 """
 import os
 import json
 from typing import Dict, Any, Optional
-from openai import OpenAI
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,13 +14,13 @@ load_dotenv()
 class LLMClient:
     """Handles all LLM interactions with structured prompt/response logging"""
     
-    def __init__(self, model: str = "gpt-3.5-turbo"):
-        self.api_key = os.getenv("OPENAI_API_KEY")
+    def __init__(self, model: str = "gemini-1.5-flash"):
+        self.api_key = os.getenv("GEMINI_API_KEY")
         if not self.api_key:
-            raise ValueError("OPENAI_API_KEY not found in environment variables")
+            raise ValueError("GEMINI_API_KEY not found in environment variables")
         
-        self.client = OpenAI(api_key=self.api_key)
-        self.model = model
+        genai.configure(api_key=self.api_key)
+        self.model = genai.GenerativeModel(model)
         self.call_history = []
     
     def call_llm(
@@ -43,27 +43,39 @@ class LLMClient:
             Dict with 'response', 'raw_response', 'prompt_used', 'success', 'error'
         """
         try:
-            response_format = {"type": "json_object"} if json_mode else None
+            # Add JSON instruction if needed
+            if json_mode:
+                full_prompt = f"{prompt}\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown, no code blocks, just pure JSON."
+            else:
+                full_prompt = prompt
             
-            completion = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a helpful email productivity assistant. Always respond with valid JSON when requested."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=temperature,
-                max_tokens=max_tokens,
-                response_format=response_format
+            # Configure generation
+            generation_config = {
+                "temperature": temperature,
+                "max_output_tokens": max_tokens,
+            }
+            
+            # Call Gemini
+            response = self.model.generate_content(
+                full_prompt,
+                generation_config=generation_config
             )
             
-            raw_response = completion.choices[0].message.content
+            raw_response = response.text
             
             # Try to parse JSON response
             if json_mode:
                 try:
-                    parsed_response = json.loads(raw_response)
-                except json.JSONDecodeError:
-                    parsed_response = {"error": "Failed to parse JSON", "raw": raw_response}
+                    # Clean response (remove markdown if present)
+                    clean_response = raw_response.strip()
+                    if clean_response.startswith("```json"):
+                        clean_response = clean_response.split("```json")[1].split("```")[0].strip()
+                    elif clean_response.startswith("```"):
+                        clean_response = clean_response.split("```")[1].split("```")[0].strip()
+                    
+                    parsed_response = json.loads(clean_response)
+                except json.JSONDecodeError as e:
+                    parsed_response = {"error": "Failed to parse JSON", "raw": raw_response, "parse_error": str(e)}
             else:
                 parsed_response = {"text": raw_response}
             
@@ -72,7 +84,7 @@ class LLMClient:
                 "response": parsed_response,
                 "raw_response": raw_response,
                 "prompt_used": prompt,
-                "model": self.model,
+                "model": "gemini-1.5-flash",
                 "error": None
             }
             
@@ -82,16 +94,16 @@ class LLMClient:
             return result
             
         except Exception as e:
-            error_result = {
+            result = {
                 "success": False,
                 "response": None,
                 "raw_response": None,
                 "prompt_used": prompt,
-                "model": self.model,
+                "model": "gemini-1.5-flash",
                 "error": str(e)
             }
-            self.call_history.append(error_result)
-            return error_result
+            self.call_history.append(result)
+            return result
     
     def get_call_history(self) -> list:
         """Return history of all LLM calls"""

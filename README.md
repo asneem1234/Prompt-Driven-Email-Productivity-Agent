@@ -18,7 +18,7 @@ A prompt-driven intelligent email productivity system that automatically categor
 ### Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key (or compatible LLM provider)
+- Google Gemini API key (FREE - get it from [Google AI Studio](https://makersuite.google.com/app/apikey))
 
 ### Installation
 
@@ -52,9 +52,10 @@ A prompt-driven intelligent email productivity system that automatically categor
 
 ### 1. Initial Setup
 
-1. Enter your OpenAI API key in the sidebar
-2. Click "Initialize Application"
-3. Wait for the success message
+1. Get your FREE Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Enter your Gemini API key in the sidebar
+3. Click "Initialize Application"
+4. Wait for the success message
 
 ### 2. Load Mock Inbox
 
@@ -140,20 +141,13 @@ Creates concise summaries with key points and urgency levels
 
 ## 🔧 Configuration
 
-### Using Different LLM Providers
+### Using Different LLM Models
 
-Edit `src/llm_client.py` to use different providers:
+The system uses Google Gemini by default (FREE). To use a different Gemini model, edit `src/llm_client.py`, line 19:
 
 ```python
-# For Azure OpenAI
-from openai import AzureOpenAI
-client = AzureOpenAI(
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version="2023-05-15",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-)
-
-# For other providers, adjust accordingly
+def __init__(self, model: str = "gemini-1.5-pro"):  # Change model here
+    # Options: gemini-1.5-flash (fast), gemini-1.5-pro (smarter)
 ```
 
 ### Customizing Email Categories
@@ -239,4 +233,4 @@ For questions or issues, please open an issue on GitHub.
 
 ---
 
-**Built with ❤️ using Streamlit, OpenAI, and Python**
+**Built with ❤️ using Streamlit, Google Gemini AI (FREE), and Python**
