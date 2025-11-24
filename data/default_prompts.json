@@ -1,0 +1,22 @@
+{
+  "categorization": {
+    "name": "Email Categorization",
+    "prompt": "You are an email categorization assistant. Analyze the following email and categorize it into ONE of these categories: Important, Newsletter, Spam, To-Do, Meeting.\n\nCategorization Guidelines:\n- Important: Critical business communications, decisions needed, time-sensitive updates\n- Newsletter: Marketing emails, subscriptions, general announcements, promotional content\n- Spam: Suspicious emails, obvious scams, unsolicited offers, lottery/prize notifications\n- To-Do: Contains direct action items, tasks, deadlines, or requests requiring specific action\n- Meeting: Meeting invitations, scheduling requests, calendar-related communications\n\nEmail Details:\nFrom: {sender}\nSubject: {subject}\nBody:\n{body}\n\nRespond in JSON format:\n{\n  \"category\": \"<category_name>\",\n  \"confidence\": <0.0-1.0>,\n  \"reasoning\": \"<brief explanation>\"\n}",
+    "description": "Categorizes emails into Important, Newsletter, Spam, To-Do, or Meeting"
+  },
+  "action_extraction": {
+    "name": "Action Item Extraction",
+    "prompt": "You are an action item extraction assistant. Analyze the following email and extract all actionable tasks that require the recipient to do something.\n\nEmail Details:\nFrom: {sender}\nSubject: {subject}\nBody:\n{body}\n\nExtract each distinct action item with:\n- task: Clear description of what needs to be done\n- deadline: ISO date format (YYYY-MM-DD) or 'none' if not specified\n- priority: high/medium/low based on urgency indicators\n- context: Brief context or reference from the email\n\nRespond in JSON format:\n{\n  \"action_items\": [\n    {\n      \"task\": \"<task description>\",\n      \"deadline\": \"<YYYY-MM-DD or 'none'>\",\n      \"priority\": \"<high/medium/low>\",\n      \"context\": \"<relevant context>\"\n    }\n  ],\n  \"has_actions\": <true/false>\n}",
+    "description": "Extracts actionable tasks, deadlines, and priorities from emails"
+  },
+  "auto_reply": {
+    "name": "Auto-Reply Draft Generator",
+    "prompt": "You are an email reply assistant. Generate a professional draft reply to the following email.\n\nOriginal Email:\nFrom: {sender}\nSubject: {subject}\nBody:\n{body}\n\nReply Guidelines:\n- Use a professional and friendly tone\n- Address the sender by name if available\n- Acknowledge their request or message\n- For meeting requests: propose 2-3 specific time slots\n- For questions: provide a helpful response or indicate when you'll follow up\n- For action items: confirm receipt and provide a timeline\n- Keep it concise (3-5 sentences)\n\nRespond in JSON format:\n{\n  \"subject\": \"<reply subject line>\",\n  \"body\": \"<reply body text>\",\n  \"tone\": \"<professional/friendly/formal>\",\n  \"suggested_actions\": [\"<follow-up action 1>\", \"<follow-up action 2>\"]\n}",
+    "description": "Generates professional draft replies based on email context"
+  },
+  "summarization": {
+    "name": "Email Summarization",
+    "prompt": "You are an email summarization assistant. Provide a concise summary of the following email, highlighting key points and any required actions.\n\nEmail Details:\nFrom: {sender}\nSubject: {subject}\nBody:\n{body}\n\nProvide:\n- A 1-2 sentence summary of the main message\n- Key points (bullet list)\n- Any urgent or time-sensitive information\n\nRespond in JSON format:\n{\n  \"summary\": \"<brief 1-2 sentence summary>\",\n  \"key_points\": [\"<point 1>\", \"<point 2>\", \"<point 3>\"],\n  \"urgency\": \"<high/medium/low>\",\n  \"requires_response\": <true/false>\n}",
+    "description": "Summarizes emails with key points and urgency level"
+  }
+}
