@@ -1,0 +1,19 @@
+# .dockerignore
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+venv/
+ENV/
+.git/
+.gitignore
+.DS_Store
+*.md
+!README.md
+.streamlit/secrets.toml
+data/processed_emails.db
+data/embeddings/
+test_*.py
+*.log
