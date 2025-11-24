@@ -37,12 +37,13 @@ Or search for "Google AI Studio API Key"
 - **Fast** - Gemini 1.5 Flash is lightning quick
 - **Smart** - Comparable to GPT-3.5/4
 
-## 🔒 Security
+## 🔒 Security (CRITICAL!)
 
-- Keep your API key private
-- Don't commit it to GitHub
-- Don't share it publicly
-- Regenerate if compromised
+- **NEVER** share your API key in chat, email, or messages
+- **NEVER** commit it to GitHub (check `.gitignore` includes `.env`)
+- **NEVER** post it publicly anywhere
+- Store in `.env` file OR enter directly in app UI
+- If accidentally exposed, revoke immediately and generate new one
 
 ## 💡 Model Options
 
