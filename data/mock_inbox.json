@@ -1,0 +1,137 @@
+[
+  {
+    "id": "e001",
+    "sender": "alice.johnson@techcorp.com",
+    "sender_name": "Alice Johnson",
+    "subject": "Project Kickoff Meeting - Agenda Required",
+    "timestamp": "2025-11-20T09:30:00Z",
+    "body": "Hi Team,\n\nI'd like to schedule our project kickoff meeting for next week. Can everyone please share their availability for Tuesday or Wednesday afternoon?\n\nAlso, please send me any agenda items you'd like to discuss. We need to cover:\n- Project timeline\n- Resource allocation\n- Key milestones\n\nLooking forward to working with you all!\n\nBest,\nAlice",
+    "thread_id": "thread_001"
+  },
+  {
+    "id": "e002",
+    "sender": "newsletter@techdigest.com",
+    "sender_name": "Tech Digest Daily",
+    "subject": "Your Daily Tech News - November 20, 2025",
+    "timestamp": "2025-11-20T06:00:00Z",
+    "body": "TECH DIGEST DAILY\n\nTop Stories:\n- AI Breakthrough: New Model Achieves 99% Accuracy\n- Quantum Computing Reaches New Milestone\n- Tech Giants Announce Merger Plans\n\nClick here to read more...\n\n[Unsubscribe] | [View in Browser]",
+    "thread_id": "thread_002"
+  },
+  {
+    "id": "e003",
+    "sender": "noreply@suspicious-lottery.biz",
+    "sender_name": "Prize Department",
+    "subject": "CONGRATULATIONS! You've Won $1,000,000!!!",
+    "timestamp": "2025-11-19T14:22:00Z",
+    "body": "Dear Winner,\n\nYou have been selected as the lucky winner of our international lottery! To claim your prize of $1,000,000, please send your bank details and processing fee of $500.\n\nACT NOW! This offer expires in 24 hours!\n\nClick here to claim your prize!\n\nBest Regards,\nPrize Department",
+    "thread_id": "thread_003"
+  },
+  {
+    "id": "e004",
+    "sender": "bob.martinez@company.com",
+    "sender_name": "Bob Martinez",
+    "subject": "URGENT: Q4 Report Deadline - Friday",
+    "timestamp": "2025-11-21T11:45:00Z",
+    "body": "Hi,\n\nJust a reminder that the Q4 financial report is due this Friday, November 24th by 5 PM.\n\nPlease ensure you:\n1. Complete all expense reports\n2. Submit budget projections for 2026\n3. Review and sign off on the draft document I sent last week\n\nLet me know if you need any clarification.\n\nThanks,\nBob",
+    "thread_id": "thread_004"
+  },
+  {
+    "id": "e005",
+    "sender": "sarah.chen@partner.org",
+    "sender_name": "Sarah Chen",
+    "subject": "Re: Partnership Proposal - Next Steps",
+    "timestamp": "2025-11-22T10:15:00Z",
+    "body": "Hi,\n\nThank you for the detailed proposal. Our team has reviewed it and we're excited to move forward!\n\nCould you please send over:\n- Draft contract for legal review\n- Timeline with key milestones\n- Contact information for your project manager\n\nWe'd like to have everything finalized by mid-December. Does that work for your team?\n\nBest regards,\nSarah",
+    "thread_id": "thread_005"
+  },
+  {
+    "id": "e006",
+    "sender": "notifications@linkedin.com",
+    "sender_name": "LinkedIn",
+    "subject": "You have 12 new profile views",
+    "timestamp": "2025-11-22T08:00:00Z",
+    "body": "Hi there,\n\nYour profile is getting attention! You have 12 new profile views this week.\n\n- John Doe viewed your profile\n- Jane Smith viewed your profile\n- And 10 others...\n\nUpdate your profile to make a great impression!\n\n[View Profile] | [Update Profile]\n\nBest,\nThe LinkedIn Team",
+    "thread_id": "thread_006"
+  },
+  {
+    "id": "e007",
+    "sender": "david.wilson@client.com",
+    "sender_name": "David Wilson",
+    "subject": "Follow-up: Demo Feedback",
+    "timestamp": "2025-11-22T14:30:00Z",
+    "body": "Hello,\n\nThank you for the product demo yesterday. The team was impressed with the features.\n\nWe do have a few questions:\n1. Can the system integrate with our existing CRM?\n2. What's the typical implementation timeline?\n3. Do you offer training for our staff?\n\nCould we schedule a technical deep-dive call next week to discuss these points?\n\nRegards,\nDavid",
+    "thread_id": "thread_007"
+  },
+  {
+    "id": "e008",
+    "sender": "promo@deals-unlimited.com",
+    "sender_name": "Deals Unlimited",
+    "subject": "50% OFF Everything! Limited Time Only!",
+    "timestamp": "2025-11-21T16:00:00Z",
+    "body": "FLASH SALE ALERT!\n\n50% OFF EVERYTHING IN STORE!\n\nUse code: FLASH50 at checkout\n\nThis offer ends TONIGHT at midnight!\n\nShop Now: [Link]\n\n[Unsubscribe]",
+    "thread_id": "thread_008"
+  },
+  {
+    "id": "e009",
+    "sender": "emily.rodriguez@hr.company.com",
+    "sender_name": "Emily Rodriguez (HR)",
+    "subject": "Action Required: Complete Annual Performance Review",
+    "timestamp": "2025-11-23T09:00:00Z",
+    "body": "Dear Team Member,\n\nIt's time for your annual performance review. Please complete the following by November 30th:\n\n1. Self-assessment form (link attached)\n2. Goal setting worksheet for 2026\n3. Schedule 1-on-1 meeting with your manager\n\nYour manager will also complete their assessment by the same date. The review meeting will be scheduled in early December.\n\nPlease reach out if you have any questions.\n\nBest,\nEmily Rodriguez\nHuman Resources",
+    "thread_id": "thread_009"
+  },
+  {
+    "id": "e010",
+    "sender": "michael.brown@vendor.com",
+    "sender_name": "Michael Brown",
+    "subject": "Invoice #INV-2025-1123 - Payment Reminder",
+    "timestamp": "2025-11-22T13:20:00Z",
+    "body": "Hello,\n\nThis is a friendly reminder that Invoice #INV-2025-1123 for $5,400 is due on November 28, 2025.\n\nPayment details:\n- Amount: $5,400.00\n- Due Date: November 28, 2025\n- Invoice Date: November 1, 2025\n- Terms: Net 30\n\nPlease let me know if you need a copy of the invoice or have any questions.\n\nThank you,\nMichael Brown\nAccounts Receivable",
+    "thread_id": "thread_010"
+  },
+  {
+    "id": "e011",
+    "sender": "lisa.anderson@marketing.com",
+    "sender_name": "Lisa Anderson",
+    "subject": "Campaign Launch - Need Your Approval",
+    "timestamp": "2025-11-23T10:45:00Z",
+    "body": "Hi,\n\nWe're ready to launch the holiday campaign next Monday, November 27th. Before we proceed, I need your approval on:\n\n1. Final creative assets (attached)\n2. Budget allocation ($15K for ads, $5K for influencers)\n3. Target audience segments\n\nCan you review and confirm by end of day Thursday? We need to submit everything to the ad platforms by Friday morning.\n\nThanks!\nLisa",
+    "thread_id": "thread_011"
+  },
+  {
+    "id": "e012",
+    "sender": "security@company.com",
+    "sender_name": "IT Security Team",
+    "subject": "Security Alert: Password Reset Required",
+    "timestamp": "2025-11-23T07:30:00Z",
+    "body": "SECURITY NOTICE\n\nDue to recent security updates, all employees must reset their passwords by November 25, 2025.\n\nPassword requirements:\n- Minimum 12 characters\n- Include uppercase, lowercase, numbers, and symbols\n- Cannot reuse last 5 passwords\n\nTo reset your password, visit: [Internal Portal Link]\n\nIf you need assistance, contact IT Support at ext. 5555.\n\nThank you,\nIT Security Team",
+    "thread_id": "thread_012"
+  },
+  {
+    "id": "e013",
+    "sender": "events@conference.org",
+    "sender_name": "Tech Conference 2026",
+    "subject": "Save the Date: Tech Conference 2026 - Early Bird Pricing",
+    "timestamp": "2025-11-21T12:00:00Z",
+    "body": "Join us for Tech Conference 2026!\n\nDates: March 15-17, 2026\nLocation: San Francisco Convention Center\n\nEarly bird tickets now available:\n- Regular: $599 (Save $200)\n- VIP: $999 (Save $300)\n\nFeatured speakers:\n- Industry leaders from top tech companies\n- Hands-on workshops\n- Networking events\n\nRegister now: [Link]\n\nEarly bird pricing ends December 15, 2025!",
+    "thread_id": "thread_013"
+  },
+  {
+    "id": "e014",
+    "sender": "jennifer.lee@legal.company.com",
+    "sender_name": "Jennifer Lee (Legal)",
+    "subject": "Contract Review Needed - Urgent",
+    "timestamp": "2025-11-23T11:30:00Z",
+    "body": "Hi,\n\nI need your input on the vendor contract for the new software platform. There are a few clauses that concern me:\n\n1. Data ownership rights (Section 7.2)\n2. Termination conditions (Section 12.1)\n3. Liability limitations (Section 15)\n\nCan we schedule a 30-minute call today or tomorrow to discuss? This is blocking the procurement process.\n\nPlease let me know your availability.\n\nThanks,\nJennifer Lee\nLegal Department",
+    "thread_id": "thread_014"
+  },
+  {
+    "id": "e015",
+    "sender": "team@project-mgmt.tools",
+    "sender_name": "Project Management Tool",
+    "subject": "Weekly Summary: 5 tasks due this week",
+    "timestamp": "2025-11-23T06:00:00Z",
+    "body": "Your Weekly Project Summary\n\nDue This Week (Nov 23-29):\n- Update project documentation (Due: Nov 24)\n- Review team capacity planning (Due: Nov 25)\n- Submit budget request (Due: Nov 27)\n- Complete stakeholder interviews (Due: Nov 28)\n- Finalize roadmap for Q1 2026 (Due: Nov 29)\n\nOverdue Tasks: 2\n- Risk assessment report\n- Team training schedule\n\n[View Dashboard] | [Update Tasks]",
+    "thread_id": "thread_015"
+  }
+]
