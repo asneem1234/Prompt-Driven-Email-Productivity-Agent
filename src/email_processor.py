@@ -21,7 +21,7 @@ class EmailProcessor:
         
         # Create a separate fast model for categorization to avoid rate limits
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.fast_model = genai.GenerativeModel("gemini-2.5-flash")
+        self.fast_model = genai.GenerativeModel("gemini-2.0-flash")
     
     def process_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -98,7 +98,7 @@ class EmailProcessor:
                         "success": False,
                         "response": {"category": "Other", "confidence": 0.5, "reasoning": "Content filtered"},
                         "error": "Content filtered by safety",
-                        "model": "gemini-2.5-flash"
+                        "model": "gemini-2.0-flash"
                     }
                 
                 # Parse response
@@ -114,7 +114,7 @@ class EmailProcessor:
                     "success": True,
                     "response": parsed_response,
                     "raw_response": raw_response,
-                    "model": "gemini-2.5-flash"
+                    "model": "gemini-2.0-flash"
                 }
                 
             except Exception as e:
@@ -136,7 +136,7 @@ class EmailProcessor:
                             "success": False,
                             "response": {"category": "Other", "confidence": 0.0, "reasoning": "Daily quota exhausted"},
                             "error": "QUOTA_EXHAUSTED",
-                            "model": "gemini-2.5-flash"
+                            "model": "gemini-2.0-flash"
                         }
                 
                 # Other errors - return default
@@ -145,7 +145,7 @@ class EmailProcessor:
                     "success": False,
                     "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
                     "error": str(e),
-                    "model": "gemini-2.5-flash"
+                    "model": "gemini-2.0-flash"
                 }
     
     def extract_actions(self, email: Dict[str, Any]) -> Dict[str, Any]:
