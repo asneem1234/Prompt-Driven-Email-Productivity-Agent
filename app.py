@@ -318,22 +318,6 @@ def drafts():
     return render_template('drafts.html', drafts=all_drafts)
 
 
-@app.route('/api/generate-reply/<email_id>', methods=['POST'])
-def generate_reply(email_id):
-    """Generate a reply draft for an email"""
-    instances = get_or_create_instances()
-    
-    email = next((e for e in instances['inbox'] if e['id'] == email_id), None)
-    if not email:
-        return jsonify({'success': False, 'error': 'Email not found'})
-    
-    try:
-        result = instances['draft_manager'].generate_reply_draft(email)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
-
 @app.route('/api/generate-new-draft', methods=['POST'])
 def generate_new_draft():
     """Generate a new email draft"""
