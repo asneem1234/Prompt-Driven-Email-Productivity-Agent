@@ -113,7 +113,7 @@ class LLMClient:
             except Exception as e:
                 error_msg = str(e)
                 
-                # Check if it's a rate limit error
+                # Check if it's a rate limit error or connectivity issue
                 if "429" in error_msg or "RATE_LIMIT_EXCEEDED" in error_msg or "Quota exceeded" in error_msg:
                     if attempt < max_retries - 1:
                         # Wait before retrying (longer wait for rate limits)
@@ -128,6 +128,23 @@ class LLMClient:
                             "1. Upgrade to paid tier at https://ai.google.dev/pricing\n"
                             "2. Reduce number of simultaneous requests\n"
                             "3. Wait for the rate limit window to reset\n"
+                            f"Original error: {error_msg}"
+                        )
+                # Check for connectivity issues (503, timeout, socket errors)
+                elif "503" in error_msg or "Timeout" in error_msg or "socket" in error_msg or "failed to connect" in error_msg:
+                    if attempt < max_retries - 1:
+                        # Wait before retrying (exponential backoff)
+                        wait_time = (2 ** attempt) * 5  # 5, 10, 20 seconds
+                        print(f"⚠️ Connection issue. Retrying in {wait_time} seconds... ({attempt + 1}/{max_retries})")
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        error_msg = (
+                            "❌ Unable to connect to Gemini API after multiple attempts. "
+                            "This could be due to:\n"
+                            "1. Network connectivity issues\n"
+                            "2. Google API service outage\n"
+                            "3. Firewall/proxy blocking the connection\n"
                             f"Original error: {error_msg}"
                         )
                 
