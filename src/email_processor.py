@@ -84,8 +84,7 @@ class EmailProcessor:
             print(f"      🤖 Calling Gemini API for email {email['id']}...")
             response = self.fast_model.generate_content(
                 prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON.",
-                generation_config={"temperature": 0.3, "max_output_tokens": 500},
-                request_options={"timeout": 60}
+                generation_config={"temperature": 0.3, "max_output_tokens": 500}
             )
             print(f"      ✓ API response received")
             
