@@ -14,7 +14,7 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 echo "Checking dependencies..."
-if ! python3 -c "import streamlit" &> /dev/null; then
+if ! python3 -c "import flask" &> /dev/null; then
     echo "Installing dependencies..."
     pip3 install -r requirements.txt
 fi
@@ -22,8 +22,8 @@ fi
 echo
 echo "Starting application..."
 echo
-echo "The app will open in your browser at http://localhost:8501"
+echo "The app will open in your browser at http://localhost:5000"
 echo "Press Ctrl+C to stop the server"
 echo
 
-streamlit run app.py
+python3 app.py
