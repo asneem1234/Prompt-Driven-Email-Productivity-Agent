@@ -101,12 +101,25 @@ class EmailProcessor:
                         "model": "gemini-2.0-flash"
                     }
                 
-                # Parse response
+                # Parse response - clean up common formatting issues
                 raw_response = response.text.strip()
+                
+                # Remove markdown code blocks
                 if raw_response.startswith("```json"):
                     raw_response = raw_response.split("```json")[1].split("```")[0].strip()
                 elif raw_response.startswith("```"):
                     raw_response = raw_response.split("```")[1].split("```")[0].strip()
+                
+                # Remove any leading/trailing whitespace and newlines
+                raw_response = raw_response.strip()
+                
+                # Try to find JSON object if there's extra text
+                if not raw_response.startswith("{"):
+                    # Look for the first { and last }
+                    start_idx = raw_response.find("{")
+                    end_idx = raw_response.rfind("}")
+                    if start_idx != -1 and end_idx != -1:
+                        raw_response = raw_response[start_idx:end_idx+1]
                 
                 parsed_response = json.loads(raw_response)
                 print(f"      ✓ Parsed category: {parsed_response.get('category', 'Unknown')}")
