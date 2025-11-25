@@ -6,15 +6,17 @@ from typing import Dict, Any, List, Optional
 from src.llm_client import LLMClient
 from src.email_processor import EmailProcessor
 from src.rag_system import EmailRAGSystem
+from src.prompt_manager import PromptManager
 
 
 class EmailAgent:
     """Conversational agent for interacting with email inbox using RAG"""
     
-    def __init__(self, llm_client: LLMClient, email_processor: EmailProcessor):
+    def __init__(self, llm_client: LLMClient, email_processor: EmailProcessor, prompt_manager: PromptManager = None):
         self.llm_client = llm_client
         self.email_processor = email_processor
         self.rag_system = EmailRAGSystem()
+        self.prompt_manager = prompt_manager or PromptManager()
         self.conversation_history = []
     
     def query(
@@ -220,6 +222,58 @@ Return JSON:
                 context_parts.append("---")
         
         return "\n".join(context_parts)
+    
+    def generate_reply(self, email: Dict[str, Any], user_instruction: str = None) -> Dict[str, Any]:
+        """
+        Generate a reply draft for an email using prompt manager
+        
+        Args:
+            email: The email to reply to
+            user_instruction: Optional specific instructions for the reply
+            
+        Returns:
+            Dict with generated reply and metadata
+        """
+        # Get reply prompt from prompt manager
+        reply_prompt_data = self.prompt_manager.get_prompt("reply_generation")
+        
+        if reply_prompt_data:
+            # Use user-defined prompt
+            base_prompt = reply_prompt_data.get('prompt', '')
+            formatted_prompt = self.prompt_manager.format_prompt("reply_generation", email)
+        else:
+            # Fallback if no prompt defined
+            formatted_prompt = f"""Generate a professional email reply.
+
+Original Email:
+From: {email.get('sender_name', email.get('sender'))}
+Subject: {email.get('subject')}
+Body: {email.get('body', '')}
+
+Generate a suitable reply."""
+        
+        # Add user instruction if provided
+        if user_instruction:
+            formatted_prompt += f"\n\nAdditional Instructions: {user_instruction}"
+        
+        formatted_prompt += "\n\nReturn JSON: {\"reply_body\": \"your reply text here\", \"subject\": \"Re: subject\"}"
+        
+        # Call LLM
+        result = self.llm_client.call_llm(formatted_prompt, temperature=0.7, max_tokens=800)
+        
+        if result.get('success'):
+            reply_data = result.get('response', {})
+            return {
+                'success': True,
+                'reply_body': reply_data.get('reply_body', ''),
+                'subject': reply_data.get('subject', f"Re: {email.get('subject', '')}"),
+                'original_email_id': email.get('id')
+            }
+        else:
+            return {
+                'success': False,
+                'error': result.get('error', 'Failed to generate reply')
+            }
     
     def get_conversation_history(self) -> List[Dict[str, Any]]:
         """Get conversation history"""

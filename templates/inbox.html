@@ -123,13 +123,36 @@
     }
     
     function generateReply(emailId) {
-        if (!confirm('Generate a reply draft for this email?')) return;
-        $.post(`/api/generate-reply/${emailId}`, function(data) {
-            if (data.success) {
-                alert('✅ Draft created!');
-                window.location.href = '{{ url_for("drafts") }}';
-            } else {
-                alert(`❌ Error: ${data.error}`);
+        const instruction = prompt('Any specific instructions for the reply? (Leave blank for default)');
+        if (instruction === null) return; // User cancelled
+        
+        $.ajax({
+            url: '/api/generate-reply',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({email_id: emailId, instruction: instruction}),
+            success: function(data) {
+                if (data.success) {
+                    // Save as draft
+                    $.ajax({
+                        url: '/api/save-draft',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            subject: data.subject,
+                            body: data.reply_body,
+                            in_reply_to: emailId
+                        }),
+                        success: function(draftData) {
+                            if (draftData.success) {
+                                alert('✅ Reply draft created!');
+                                window.location.href = '{{ url_for("drafts") }}';
+                            }
+                        }
+                    });
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
             }
         });
     }

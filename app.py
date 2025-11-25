@@ -5,6 +5,7 @@ Main application interface
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import json
 import os
+import time
 from datetime import datetime
 from dotenv import load_dotenv
 from src.llm_client import LLMClient
@@ -57,7 +58,8 @@ def get_or_create_instances():
             )
             instances['email_agent'] = EmailAgent(
                 instances['llm_client'],
-                instances['email_processor']
+                instances['email_processor'],
+                instances['prompt_manager']
             )
             
             # Auto-load inbox from mock data
@@ -302,11 +304,16 @@ def drafts():
     """Drafts page"""
     instances = get_or_create_instances()
     
+    # Get drafts from draft_manager
     draft_manager = instances['draft_manager']
-    all_drafts = draft_manager.get_all_drafts()
+    manager_drafts = draft_manager.get_all_drafts()
     
-    # Sort by created_at
-    all_drafts = sorted(all_drafts, key=lambda d: d.get('created_at', ''), reverse=True)
+    # Also get drafts from session (generated replies)
+    session_drafts = instances.get('drafts', [])
+    
+    # Combine and sort
+    all_drafts = list(manager_drafts) + list(session_drafts)
+    all_drafts = sorted(all_drafts, key=lambda d: d.get('created_at', d.get('timestamp', '')), reverse=True)
     
     return render_template('drafts.html', drafts=all_drafts)
 
@@ -471,6 +478,55 @@ def clear_chat():
     instances = get_or_create_instances()
     instances['chat_history'] = []
     return jsonify({'success': True})
+
+
+@app.route('/api/generate-reply', methods=['POST'])
+def generate_reply():
+    """Generate a reply for an email"""
+    instances = get_or_create_instances()
+    
+    data = request.json
+    email_id = data.get('email_id')
+    user_instruction = data.get('instruction', '')
+    
+    if not email_id:
+        return jsonify({'success': False, 'error': 'No email ID provided'})
+    
+    # Find the email
+    email = next((e for e in instances['inbox'] if e.get('id') == email_id), None)
+    
+    if not email:
+        return jsonify({'success': False, 'error': 'Email not found'})
+    
+    try:
+        result = instances['email_agent'].generate_reply(email, user_instruction)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/save-draft', methods=['POST'])
+def save_draft():
+    """Save an email draft"""
+    instances = get_or_create_instances()
+    
+    data = request.json
+    draft = {
+        'id': f"draft_{len(instances.get('drafts', []))}_{int(time.time())}",
+        'to': data.get('to', ''),
+        'subject': data.get('subject', ''),
+        'body': data.get('body', ''),
+        'timestamp': datetime.now().isoformat(),
+        'in_reply_to': data.get('in_reply_to'),
+        'folder': 'drafts'
+    }
+    
+    if 'drafts' not in instances:
+        instances['drafts'] = []
+    
+    instances['drafts'].append(draft)
+    
+    return jsonify({'success': True, 'draft': draft})
 
 
 # For Vercel serverless deployment
