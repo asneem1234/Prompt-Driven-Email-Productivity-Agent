@@ -520,29 +520,59 @@ body {
     white-space: nowrap;
 }
 
+/* Urgent/Important - RED */
+.gmail-badge.urgent,
 .gmail-badge.important {
     background: #fce8e6;
     color: #d93025;
+    border-left: 3px solid #d93025;
 }
 
-.gmail-badge.newsletter {
-    background: #e8f0fe;
-    color: #1967d2;
-}
-
-.gmail-badge.spam {
-    background: #f1f3f4;
-    color: #5f6368;
-}
-
+/* Deadline/Time-sensitive - ORANGE */
+.gmail-badge.deadline,
+.gmail-badge.timesensitive,
 .gmail-badge.todo {
     background: #fef7e0;
     color: #ea8600;
+    border-left: 3px solid #ea8600;
 }
 
+/* Conversation/Informational - GREEN */
+.gmail-badge.conversation,
+.gmail-badge.informational,
+.gmail-badge.newsletter,
 .gmail-badge.meeting {
     background: #e6f4ea;
     color: #137333;
+    border-left: 3px solid #137333;
+}
+
+/* Spam/Promotional - GREY */
+.gmail-badge.spam,
+.gmail-badge.promotional,
+.gmail-badge.lowpriority {
+    background: #f1f3f4;
+    color: #5f6368;
+    border-left: 3px solid #5f6368;
+}
+
+/* Others/Uncategorized - LIGHT ORANGE */
+.gmail-badge.other,
+.gmail-badge.unknown {
+    background: #fff4e5;
+    color: #f57c00;
+    border-left: 3px solid #f57c00;
+}
+
+/* Add rotating animation for loading */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.rotating {
+    animation: rotate 1s linear infinite;
+    display: inline-block;
 }
 
 .email-row-right {

@@ -227,6 +227,29 @@ def deselect_email():
     return jsonify({'success': True})
 
 
+@app.route('/api/categorize-all', methods=['POST'])
+def categorize_all():
+    """Categorize all emails with color-coded categories"""
+    instances = get_or_create_instances()
+    
+    try:
+        processed_count = 0
+        for email in instances['inbox']:
+            if email['id'] not in instances['processed_emails']:
+                result = instances['email_processor'].process_email(email)
+                instances['processed_emails'][email['id']] = result
+                
+                # Add category to email object for display
+                if result and result.get('category'):
+                    email['processed'] = result
+                
+                processed_count += 1
+        
+        return jsonify({'success': True, 'processed': processed_count})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
 @app.route('/prompt-brain')
 def prompt_brain():
     """Prompt brain configuration page"""

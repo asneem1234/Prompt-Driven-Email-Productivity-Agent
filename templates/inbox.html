@@ -13,6 +13,10 @@
             <button class="icon-btn" onclick="refreshInbox()" title="Refresh">
                 <span class="material-icons">refresh</span>
             </button>
+            <button class="btn btn-primary" onclick="categorizeAllEmails()" title="Categorize all emails with color coding" style="margin-left: 10px;">
+                <span class="material-icons" style="font-size: 18px; vertical-align: middle;">category</span>
+                Categorize All
+            </button>
             <button class="icon-btn" onclick="showMoreActions()" title="More actions">
                 <span class="material-icons">more_vert</span>
             </button>
@@ -164,6 +168,37 @@
                 location.reload();
             } else {
                 alert(`❌ Error: ${data.error}`);
+            }
+        });
+    }
+    
+    function categorizeAllEmails() {
+        if (!confirm('Categorize all emails? This will analyze each email and apply color-coded categories.')) {
+            return;
+        }
+        
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-icons rotating" style="font-size: 18px;">hourglass_empty</span> Processing...';
+        
+        $.ajax({
+            url: '/api/categorize-all',
+            method: 'POST',
+            success: function(data) {
+                if (data.success) {
+                    alert(`✅ ${data.processed} emails categorized!`);
+                    location.reload();
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            },
+            error: function() {
+                alert('❌ Failed to categorize emails');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         });
     }
