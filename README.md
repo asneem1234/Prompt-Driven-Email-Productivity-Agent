@@ -1,202 +1,406 @@
-# 📧 Email Productivity Agent
+# 📧 Prompt-Driven Email Productivity Agent
 
-A prompt-driven intelligent email productivity system that automatically categorizes emails, extracts action items, generates draft replies, and provides a conversational chat interface for inbox management.
+**👨‍💻 Developed by:** Asneem Athar Shaik  
+**🎓 Institution:** VIT-AP University  
+**📧 GitHub:** [@asneem1234](https://github.com/asneem1234)
 
-## 🎯 Key Features
+---
 
-- **📥 Smart Inbox Management**: Load and process emails with automatic categorization
-- **🏷️ AI-Powered Categorization**: Intelligently sorts emails into Important, Newsletter, Spam, To-Do, and Meeting
-- **✅ Action Item Extraction**: Automatically identifies tasks, deadlines, and priorities
-- **✉️ Draft Generation**: Creates professional email replies (never sends automatically)
-- **🧠 Prompt Brain**: Fully customizable prompt templates that control agent behavior
-- **💬 Email Agent Chat**: Natural language interface for querying and managing your inbox
-- **🔒 Safety First**: All drafts are saved locally and never sent automatically
-- **📊 Real-time Analytics**: Track email categories and action items
+An intelligent AI-powered email management system that categorizes emails, extracts action items, generates draft replies, and provides a conversational RAG-powered chat interface for inbox management.
 
-## 🚀 Quick Start
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)](https://flask.palletsprojects.com/)
+[![Google Gemini](https://img.shields.io/badge/Gemini-2.0--Flash-orange.svg)](https://ai.google.dev/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-### Prerequisites
+## 🎯 Features
 
-- Python 3.8 or higher
-- Google Gemini API key (FREE - get it from [Google AI Studio](https://makersuite.google.com/app/apikey))
+- ✅ **Smart Email Categorization** - Color-coded tags (Urgent, Deadline, Conversation, Spam, Other)
+- 🤖 **Prompt-Driven Architecture** - Fully customizable AI behavior through editable prompts
+- 💬 **RAG-Powered Chat** - Conversational interface with semantic search across emails
+- ✉️ **Draft Generation** - AI-generated professional replies (draft-only, never auto-sends)
+- 📊 **Bulk Processing** - Categorize all emails at once with rate limit protection
+- 🎨 **Gmail-Style UI** - Professional interface with Material Icons
+- 🔒 **Safety First** - All AI actions create drafts for manual review
 
-### Installation
+---
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/asneem1234/Prompt-Driven-Email-Productivity-Agent.git
-   cd Prompt-Driven-Email-Productivity-Agent
-   ```
+## 📋 Table of Contents
 
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Usage Guide](#usage-guide)
+- [Project Structure](#project-structure)
+- [Documentation](#documentation)
+- [Troubleshooting](#troubleshooting)
 
-3. **Set up environment variables** (Optional - can also enter in UI)
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your OPENAI_API_KEY
-   ```
+---
 
-4. **Run the application**
-   ```bash
-   streamlit run app.py
-   ```
+## 🔧 Prerequisites
 
-5. **Open your browser**
-   - The app will automatically open at `http://localhost:8501`
-   - If not, navigate to that URL manually
+Before you begin, ensure you have:
+
+- **Python 3.11+** installed ([Download here](https://www.python.org/downloads/))
+- **Google Gemini API Key** (FREE - [Get it here](https://makersuite.google.com/app/apikey))
+- **Git** installed ([Download here](https://git-scm.com/downloads))
+
+---
+
+## 📦 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/asneem1234/Prompt-Driven-Email-Productivity-Agent.git
+cd Prompt-Driven-Email-Productivity-Agent
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**Required packages:**
+- `Flask==3.0.0` - Web framework
+- `google-generativeai` - Gemini AI integration
+- `python-dotenv` - Environment variable management
+- `numpy==1.24.3` - Vector operations for RAG
+
+---
+
+## ⚙️ Configuration
+
+### 1. Set Up Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+# Copy the example file
+cp .env.example .env
+```
+
+Edit `.env` and add your API key:
+
+```env
+GEMINI_API_KEY=your_actual_api_key_here
+```
+
+> 💡 **Get your free API key:** Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+### 2. Mock Inbox (Pre-loaded)
+
+The application comes with **25 sample emails** in `data/mock_inbox.json`:
+- Meeting requests
+- Project updates  
+- Urgent notifications
+- Spam messages
+- Task assignments
+
+**No additional setup needed** - emails load automatically!
+
+### 3. Configure Prompts (Optional)
+
+Default prompts are in `data/default_prompts.json`. You can edit them:
+- Through the UI: Navigate to **Custom Prompt** page
+- Manually: Edit the JSON file directly
+
+**Available prompts:**
+1. **Categorization** - Email classification rules
+2. **Action Extraction** - Task and deadline identification
+3. **Auto-Reply** - Draft generation guidelines
+4. **Summarization** - Email summary templates
+
+---
+
+## 🚀 Running the Application
+
+### Start the Server
+
+**Windows:**
+```bash
+python app.py
+```
+
+**Mac/Linux:**
+```bash
+python3 app.py
+```
+
+**Alternative (using run scripts):**
+```bash
+# Windows
+run.bat
+
+# Mac/Linux
+./run.sh
+```
+
+### Access the Application
+
+Open your browser and navigate to:
+```
+http://127.0.0.1:5000
+```
+
+The application should automatically redirect to the **Inbox** page
+
+---
 
 ## 📖 Usage Guide
 
-### 1. Initial Setup
+### 1. **View Your Inbox**
 
-1. Get your FREE Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Enter your Gemini API key in the sidebar
-3. Click "Initialize Application"
-4. Wait for the success message
+Upon loading, you'll see:
+- 25 pre-loaded emails
+- Sender information
+- Subject lines
+- Timestamps
+- Category badges (after categorization)
 
-### 2. Load Mock Inbox
+### 2. **Categorize Emails**
 
-1. Click "📂 Load Inbox" in the sidebar
-2. The system will load 15 sample emails
-3. Click "⚡ Process All" to analyze all emails
+**Option A: Bulk Categorization**
+1. Click the **"Categorize All"** button in the toolbar
+2. Watch real-time progress as emails are processed
+3. View color-coded badges:
+   - 🔴 **RED** = Urgent
+   - 🟠 **ORANGE** = Deadline
+   - 🟢 **GREEN** = Conversation
+   - ⚫ **GREY** = Spam
+   - 🟤 **OTHER** = Uncategorized
 
-### 3. Browse Your Inbox
+**Option B: Individual Email**
+- Click on any email to view details
+- Categorization happens automatically
 
-- View categorized emails in the main inbox view
-- Filter by category (Important, Newsletter, Spam, To-Do, Meeting)
-- Click "👁️ View" on any email to see details
-- Expand emails to see summaries and action items
+### 3. **Use the Email Agent Chat**
 
-### 4. Configure Prompts (Prompt Brain)
+Navigate to **Chat** in the sidebar:
 
-1. Navigate to "🧠 Prompt Brain"
-2. Select a prompt type to edit:
-   - **Categorization**: Controls how emails are sorted
-   - **Action Extraction**: Defines how tasks are identified
-   - **Auto-Reply**: Shapes draft reply generation
-   - **Summarization**: Controls email summaries
-3. Edit the prompt template (use `{sender}`, `{subject}`, `{body}` placeholders)
-4. Test your prompt on sample emails
-5. Save changes
+**Example Queries:**
+```
+"What are my urgent emails?"
+"Tell me about emails from Chris Lee"
+"What tasks do I need to complete?"
+"Draft a reply to the meeting request"
+"Show me all unread messages"
+"Summarize my inbox"
+```
 
-### 5. Generate Draft Replies
+The agent uses **RAG (Retrieval-Augmented Generation)** to:
+- Search semantically across all emails
+- Retrieve 3-5 most relevant messages
+- Generate context-aware responses
 
-1. Select an email in the inbox
-2. Click "✍️ Draft Reply"
-3. Review the generated draft in the "✉️ Drafts" page
-4. Export or delete drafts as needed
+### 4. **Customize Prompts**
 
-### 6. Chat with Your Inbox
+Navigate to **Custom Prompt** (psychology icon):
 
-1. Go to "💬 Email Agent Chat"
-2. Ask questions like:
-   - "What tasks do I need to do?"
-   - "Show me all urgent emails"
-   - "Summarize the email from Alice"
-   - "Which emails need my response?"
-3. Use quick action buttons for common queries
+1. Select a prompt type from dropdown
+2. View the current prompt
+3. Click **"Edit Prompt"**
+4. Modify the text
+5. Click **"Save Prompt"**
+6. Optionally **"Test Prompt"** with sample data
 
-## 🗂️ Project Structure
+**Prompt changes take effect immediately!**
+
+### 5. **Manage Drafts**
+
+Navigate to **Drafts**:
+- View all AI-generated draft replies
+- Click to read full content
+- Edit or delete drafts
+- Copy to your email client to send
+
+**Safety Note:** Drafts are never sent automatically!
+
+---
+
+## 📁 Project Structure
 
 ```
 Prompt-Driven-Email-Productivity-Agent/
-├── app.py                          # Main Streamlit application
-├── requirements.txt                # Python dependencies
-├── .env.example                    # Environment variables template
-├── .gitignore                      # Git ignore file
-├── README.md                       # This file
+│
+├── app.py                      # Main Flask application
+├── requirements.txt            # Python dependencies
+├── README.md                   # This file
+│
+├── src/                        # Core application modules
+│   ├── llm_client.py          # Gemini AI integration
+│   ├── email_processor.py     # Email categorization
+│   ├── email_agent.py         # RAG-powered chat agent
+│   ├── rag_system.py          # Semantic search
+│   ├── prompt_manager.py      # Prompt management
+│   └── draft_manager.py       # Draft handling
+│
+├── templates/                  # HTML templates
+│   ├── base.html              # Base layout
+│   ├── inbox.html             # Email list
+│   ├── chat.html              # Chat interface
+│   ├── drafts.html            # Draft management
+│   └── prompt_brain.html      # Prompt editor
+│
+├── static/
+│   └── style.css              # Gmail-style CSS
+│
 ├── data/
-│   ├── mock_inbox.json            # Sample emails (15 emails)
-│   ├── default_prompts.json       # Default prompt templates
-│   └── drafts.json                # Saved drafts (generated)
-└── src/
-    ├── __init__.py
-    ├── llm_client.py              # LLM integration with call logging
-    ├── prompt_manager.py          # Prompt template management
-    ├── email_processor.py         # Email processing pipeline
-    ├── draft_manager.py           # Draft generation and storage
-    └── email_agent.py             # Conversational agent
+│   ├── mock_inbox.json        # 25 sample emails
+│   └── default_prompts.json   # AI prompts
+│
+└── docs/                       # Documentation
+    ├── ARCHITECTURE.md
+    ├── ASSIGNMENT_COMPLIANCE.md
+    ├── DEMO_VIDEO_SCRIPT.md
+    ├── PROJECT_STRUCTURE.md
+    └── QUICKSTART.md
 ```
 
-## 🧠 Prompt Templates
+---
 
-The system uses four main prompt types:
+## 📚 Documentation
 
-### 1. Categorization Prompt
-Categorizes emails into: Important, Newsletter, Spam, To-Do, Meeting
+Detailed documentation available in `docs/`:
 
-### 2. Action Extraction Prompt
-Extracts tasks with deadlines and priorities in JSON format
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System design and component overview
+- **[PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)** - Complete codebase organization
+- **[QUICKSTART.md](docs/QUICKSTART.md)** - Fast setup guide
+- **[DEMO_VIDEO_SCRIPT.md](docs/DEMO_VIDEO_SCRIPT.md)** - Complete demo walkthrough
+- **[ASSIGNMENT_COMPLIANCE.md](docs/ASSIGNMENT_COMPLIANCE.md)** - Requirements checklist
 
-### 3. Auto-Reply Prompt
-Generates professional draft replies based on email context
+---
 
-### 4. Summarization Prompt
-Creates concise summaries with key points and urgency levels
+## 🐛 Troubleshooting
 
-**All prompts are fully customizable through the Prompt Brain interface!**
+### Application won't start
 
-## 🔧 Configuration
+**Error:** `ModuleNotFoundError: No module named 'flask'`
 
-### Using Different LLM Models
-
-The system uses Google Gemini by default (FREE). To use a different Gemini model, edit `src/llm_client.py`, line 19:
-
-```python
-def __init__(self, model: str = "gemini-1.5-pro"):  # Change model here
-    # Options: gemini-1.5-flash (fast), gemini-1.5-pro (smarter)
+**Solution:**
+```bash
+pip install -r requirements.txt
 ```
 
-### Customizing Email Categories
+---
 
-Edit the categorization prompt in the Prompt Brain to add/modify categories.
+### API Key Issues
 
-## 📋 Mock Inbox Details
+**Error:** `GEMINI_API_KEY not found`
 
-The `data/mock_inbox.json` contains 15 diverse sample emails:
+**Solution:**
+1. Check `.env` file exists in project root
+2. Verify API key is correct
+3. Ensure no spaces around the `=` sign
+4. Restart the application
 
-- Meeting requests (with scheduling needs)
-- Task assignments (with deadlines)
-- Newsletters (marketing content)
-- Spam/scam emails
-- Status updates
-- Follow-up requests
-- Security alerts
-- Contract reviews
-- Payment reminders
+---
+
+### Rate Limit Errors
+
+**Error:** `429 Quota exceeded`
+
+**Explanation:** Free tier has limits:
+- 15 requests per minute
+- 250 requests per day
+
+**Solutions:**
+1. Wait 60 seconds between bulk operations
+2. Use the built-in delay (4 seconds between emails)
+3. Upgrade to paid tier: [Google AI Pricing](https://ai.google.dev/pricing)
+
+---
+
+### Categorization Returns "Other"
+
+**Possible Causes:**
+1. API quota exhausted
+2. Network connectivity issues
+3. Prompt formatting errors
+
+**Solutions:**
+1. Check API key is valid
+2. Verify internet connection
+3. Reset prompts to default in Custom Prompt page
+
+---
+
+### Port Already in Use
+
+**Error:** `Address already in use`
+
+**Solution:**
+```bash
+# Windows
+netstat -ano | findstr :5000
+taskkill /PID <PID> /F
+
+# Mac/Linux
+lsof -ti:5000 | xargs kill -9
+```
+
+---
 
 ## 🎥 Demo Video
 
-**Demo Video Link**: [Add your video link here after recording]
+Watch a complete walkthrough: [Coming Soon]
 
-### Demo Video Timestamps:
-- 0:00 - Introduction and project overview
-- 0:30 - Loading mock inbox
-- 1:30 - Email categorization and processing
-- 2:30 - Prompt Brain: Editing and testing prompts
-- 3:30 - Draft generation
-- 4:30 - Email Agent chat interface
-- 5:30 - Advanced features and wrap-up
+**What's demonstrated:**
+- Loading the inbox
+- Editing custom prompts
+- Bulk email categorization
+- Using the chat agent
+- Managing drafts
 
-## 🛡️ Safety Features
+---
 
-- **No Automatic Sending**: All generated emails are saved as drafts only
-- **API Key Security**: Keys are never stored in code or committed to git
-- **Error Handling**: Graceful degradation when LLM calls fail
-- **Data Privacy**: All processing happens locally; emails never leave your system except for LLM API calls
+## 🤝 Contributing
 
-## 🧪 Testing
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-Run basic tests:
+---
 
-```bash
-python -c "from src.llm_client import LLMClient; print('✅ Imports successful')"
-```
+## 📄 License
 
-## 🚢 Deployment
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Author
+
+**Asneem Athar Shaik**  
+VIT-AP University
+
+- GitHub: [@asneem1234](https://github.com/asneem1234)
+- Repository: [Prompt-Driven-Email-Productivity-Agent](https://github.com/asneem1234/Prompt-Driven-Email-Productivity-Agent)
+
+---
+
+## 🙏 Acknowledgments
+
+- Google Gemini AI for the LLM capabilities
+- Flask framework for the web backend
+- Material Icons for UI elements
+- Gmail for design inspiration
+
+---
+
+## 📞 Support
+
+For issues or questions:
+1. Check [Troubleshooting](#troubleshooting) section
+2. Review [Documentation](docs/)
+3. Open an issue on GitHub
+
+---
+
+**Built with ❤️ using Flask, Python, and Google Gemini AI**
 
 ### Using Docker (Optional)
 
