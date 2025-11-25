@@ -76,51 +76,77 @@ class EmailProcessor:
     
     def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """Categorize email using fast model to avoid rate limits"""
+        import re
+        import time
+        
         prompt = self.prompt_manager.format_prompt("categorization", email)
         
-        # Use Gemini 2.5 Flash for categorization
-        # No retry logic - let the caller handle rate limits with delays
-        try:
-            print(f"      🤖 Calling Gemini API for email {email['id']}...")
-            response = self.fast_model.generate_content(
-                prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON.",
-                generation_config={"temperature": 0.3, "max_output_tokens": 500}
-            )
-            print(f"      ✓ API response received")
-            
-            # Check for safety blocks
-            if not response.candidates or not response.candidates[0].content.parts:
+        # Use Gemini 2.5 Flash for categorization with retry logic
+        max_retries = 2
+        for attempt in range(max_retries):
+            try:
+                print(f"      🤖 Calling Gemini API for email {email['id']}...")
+                response = self.fast_model.generate_content(
+                    prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON.",
+                    generation_config={"temperature": 0.3, "max_output_tokens": 500}
+                )
+                print(f"      ✓ API response received")
+                
+                # Check for safety blocks
+                if not response.candidates or not response.candidates[0].content.parts:
+                    return {
+                        "success": False,
+                        "response": {"category": "Other", "confidence": 0.5, "reasoning": "Content filtered"},
+                        "error": "Content filtered by safety",
+                        "model": "gemini-2.5-flash"
+                    }
+                
+                # Parse response
+                raw_response = response.text.strip()
+                if raw_response.startswith("```json"):
+                    raw_response = raw_response.split("```json")[1].split("```")[0].strip()
+                elif raw_response.startswith("```"):
+                    raw_response = raw_response.split("```")[1].split("```")[0].strip()
+                
+                parsed_response = json.loads(raw_response)
+                print(f"      ✓ Parsed category: {parsed_response.get('category', 'Unknown')}")
+                return {
+                    "success": True,
+                    "response": parsed_response,
+                    "raw_response": raw_response,
+                    "model": "gemini-2.5-flash"
+                }
+                
+            except Exception as e:
+                error_str = str(e)
+                
+                # Check for rate limit with retry delay
+                if "429" in error_str or "Quota exceeded" in error_str:
+                    # Try to extract retry delay from error message
+                    retry_match = re.search(r'retry in (\d+(?:\.\d+)?)s', error_str, re.IGNORECASE)
+                    if retry_match and attempt < max_retries - 1:
+                        retry_delay = float(retry_match.group(1))
+                        print(f"      ⏳ Rate limit hit. Waiting {retry_delay:.1f}s before retry...")
+                        time.sleep(retry_delay + 1)  # Add 1 second buffer
+                        continue
+                    else:
+                        # Daily quota exhausted - return special error
+                        print(f"      ❌ Daily quota exhausted")
+                        return {
+                            "success": False,
+                            "response": {"category": "Other", "confidence": 0.0, "reasoning": "Daily quota exhausted"},
+                            "error": "QUOTA_EXHAUSTED",
+                            "model": "gemini-2.5-flash"
+                        }
+                
+                # Other errors - return default
+                print(f"      ❌ Categorization error: {str(e)}")
                 return {
                     "success": False,
-                    "response": {"category": "Other", "confidence": 0.5, "reasoning": "Content filtered"},
-                    "error": "Content filtered by safety",
-                    "model": "gemini-1.5-flash"
+                    "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
+                    "error": str(e),
+                    "model": "gemini-2.5-flash"
                 }
-            
-            # Parse response
-            raw_response = response.text.strip()
-            if raw_response.startswith("```json"):
-                raw_response = raw_response.split("```json")[1].split("```")[0].strip()
-            elif raw_response.startswith("```"):
-                raw_response = raw_response.split("```")[1].split("```")[0].strip()
-            
-            parsed_response = json.loads(raw_response)
-            print(f"      ✓ Parsed category: {parsed_response.get('category', 'Unknown')}")
-            return {
-                "success": True,
-                "response": parsed_response,
-                "raw_response": raw_response,
-                "model": "gemini-2.5-flash"
-            }
-        except Exception as e:
-            # Return default category on error
-            print(f"      ❌ Categorization error: {str(e)}")
-            return {
-                "success": False,
-                "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
-                "error": str(e),
-                "model": "gemini-2.5-flash"
-            }
     
     def extract_actions(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """Extract action items from email"""

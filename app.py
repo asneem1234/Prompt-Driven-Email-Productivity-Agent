@@ -261,10 +261,23 @@ def categorize_all():
                     processed_count += 1
                 else:
                     failed_count += 1
-                    print(f"   ⚠️ Failed: {category_result.get('error', 'Unknown error')}")
+                    error_msg = category_result.get('error', 'Unknown error')
+                    print(f"   ⚠️ Failed: {error_msg}")
+                    
+                    # Stop immediately if daily quota is exhausted
+                    if error_msg == "QUOTA_EXHAUSTED":
+                        print(f"\n❌ Daily API quota exhausted. Stopping categorization.")
+                        print(f"✅ Successfully categorized {processed_count} emails before quota limit.")
+                        print(f"💡 Wait 24 hours for quota to reset, or upgrade at https://ai.google.dev/pricing\n")
+                        return jsonify({
+                            'success': False,
+                            'processed': processed_count,
+                            'failed': failed_count,
+                            'error': 'Daily API quota exhausted. Please wait 24 hours for reset.'
+                        })
                 
-                # Significant delay to avoid rate limits - 1.5 seconds per email
-                time.sleep(1.5)
+                # Delay to stay under requests/minute limit
+                time.sleep(4)
                 
             except Exception as e:
                 # Skip failed emails and continue
