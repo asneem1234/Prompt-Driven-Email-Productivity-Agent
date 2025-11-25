@@ -21,7 +21,7 @@ class EmailProcessor:
         
         # Create a separate fast model for categorization to avoid rate limits
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.fast_model = genai.GenerativeModel("gemini-2.0-flash-exp")
+        self.fast_model = genai.GenerativeModel("gemini-2.5-flash")
     
     def process_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -78,7 +78,7 @@ class EmailProcessor:
         """Categorize email using fast model to avoid rate limits"""
         prompt = self.prompt_manager.format_prompt("categorization", email)
         
-        # Use faster Gemini 2.0 Flash for categorization
+        # Use Gemini 2.5 Flash for categorization
         # No retry logic - let the caller handle rate limits with delays
         try:
             print(f"      🤖 Calling Gemini API for email {email['id']}...")
@@ -111,7 +111,7 @@ class EmailProcessor:
                 "success": True,
                 "response": parsed_response,
                 "raw_response": raw_response,
-                "model": "gemini-2.0-flash-exp"
+                "model": "gemini-2.5-flash"
             }
         except Exception as e:
             # Return default category on error
@@ -120,7 +120,7 @@ class EmailProcessor:
                 "success": False,
                 "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
                 "error": str(e),
-                "model": "gemini-2.0-flash-exp"
+                "model": "gemini-2.5-flash"
             }
     
     def extract_actions(self, email: Dict[str, Any]) -> Dict[str, Any]:
