@@ -68,59 +68,36 @@
             <span class="email-time">{{ email.timestamp[:5] if email.timestamp else 'Now' }}</span>
         </div>
     </div>
-        
-        {% if email.processed and email.processed.summary %}
-        <div class="email-summary">
-            <details>
-                <summary>📝 Summary & Actions</summary>
-                <div class="summary-content">
-                    <p>{{ email.processed.summary.summary }}</p>
-                    
-                    {% if email.processed.summary.key_points %}
-                    <h4>Key Points:</h4>
-                    <ul>
-                        {% for point in email.processed.summary.key_points %}
-                        <li>{{ point }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    
-                    {% if email.processed.action_items %}
-                    <h4>Action Items:</h4>
-                    <ul>
-                        {% for action in email.processed.action_items %}
-                        <li>[{{ action.priority|upper }}] {{ action.task }} (Due: {{ action.deadline or 'none' }})</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-            </details>
-        </div>
-        {% endif %}
-    </div>
     {% endfor %}
-</div>
+    </div>
+    {% endif %}
 
-{% if selected_email %}
-<div class="email-detail">
-    <h2>📧 Email Details</h2>
-    <div class="detail-content">
-        <p><strong>From:</strong> {{ selected_email.sender_name or selected_email.sender }}</p>
-        <p><strong>Subject:</strong> {{ selected_email.subject }}</p>
-        <p><strong>Date:</strong> {{ selected_email.timestamp }}</p>
-        
-        <h3>Body:</h3>
-        <div class="email-body">{{ selected_email.body }}</div>
-        
-        <div class="detail-actions">
-            <button class="btn btn-primary" onclick="generateReply('{{ selected_email.id }}')">✍️ Draft Reply</button>
-            <button class="btn btn-secondary" onclick="reprocessEmail('{{ selected_email.id }}')">🔄 Re-process</button>
+    {% if selected_email %}
+    <div class="email-detail-overlay" onclick="closeEmailDetail()">
+        <div class="email-detail-panel" onclick="event.stopPropagation()">
+            <div class="email-detail-header">
+                <h2>📧 Email Details</h2>
+                <button class="close-btn" onclick="closeEmailDetail()" title="Close">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="detail-content">
+                <p><strong>From:</strong> {{ selected_email.sender_name or selected_email.sender }}</p>
+                <p><strong>Subject:</strong> {{ selected_email.subject }}</p>
+                <p><strong>Date:</strong> {{ selected_email.timestamp }}</p>
+                
+                <h3>Body:</h3>
+                <div class="email-body">{{ selected_email.body }}</div>
+                
+                <div class="detail-actions">
+                    <button class="btn btn-primary" onclick="generateReply('{{ selected_email.id }}')">✍️ Draft Reply</button>
+                    <button class="btn btn-secondary" onclick="reprocessEmail('{{ selected_email.id }}')">🔄 Re-process</button>
+                </div>
+            </div>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
-
-{% endif %}
 
 {% endblock %}
 
@@ -136,6 +113,12 @@
             if (data.success) {
                 location.reload();
             }
+        });
+    }
+
+    function closeEmailDetail() {
+        $.post('/api/deselect-email', function() {
+            window.location.reload();
         });
     }
     

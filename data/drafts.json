@@ -1,0 +1,44 @@
+{
+  "draft_20251125_132138": {
+    "id": "draft_20251125_132138",
+    "created_at": "2025-11-25T13:21:38.920334",
+    "original_email_id": "e003",
+    "in_reply_to": {
+      "sender": "bob.martinez@company.com",
+      "subject": "Invoice #12345 from Vendor"
+    },
+    "draft_content": {
+      "subject": "Re: Invoice #12345 from Vendor",
+      "body": "Hi Bob,\n\nThank you for the reminder regarding Invoice #12345. I've received your message and will prioritize this task as requested. I expect to have this processed by the end of day today.",
+      "tone": "professional/friendly",
+      "suggested_actions": [
+        "Prioritize Invoice #12345",
+        "Process invoice by end of day"
+      ]
+    },
+    "prompt_used": "You are an email reply assistant. Generate a professional draft reply to the following email.\n\nOriginal Email:\nFrom: bob.martinez@company.com\nSubject: Invoice #12345 from Vendor\nBody:\nHi there,\n\nThis is a friendly reminder about the upcoming deadline. Please prioritize this task.\n\nRegards\n\nReply Guidelines:\n- Use a professional and friendly tone\n- Address the sender by name if available\n- Acknowledge their request or message\n- For meeting requests: propose 2-3 specific time slots\n- For questions: provide a helpful response or indicate when you'll follow up\n- For action items: confirm receipt and provide a timeline\n- Keep it concise (3-5 sentences)\n\nRespond in JSON format:\n{\n  \"subject\": \"<reply subject line>\",\n  \"body\": \"<reply body text>\",\n  \"tone\": \"<professional/friendly/formal>\",\n  \"suggested_actions\": [\"<follow-up action 1>\", \"<follow-up action 2>\"]\n}",
+    "status": "draft",
+    "custom_instructions": null
+  },
+  "draft_20251125_132601": {
+    "id": "draft_20251125_132601",
+    "created_at": "2025-11-25T13:26:01.765036",
+    "original_email_id": "e002",
+    "in_reply_to": {
+      "sender": "hr@company.com",
+      "subject": "Training Session Reminder"
+    },
+    "draft_content": {
+      "subject": "Re: Training Session Reminder",
+      "body": "Hi there,\n\nThank you for sending over the document. I have received it and will review it promptly.\n\nI will ensure to provide my feedback by EOD today as requested.\n\nBest regards,",
+      "tone": "professional/friendly",
+      "suggested_actions": [
+        "Review document",
+        "Provide feedback by EOD"
+      ]
+    },
+    "prompt_used": "You are an email reply assistant. Generate a professional draft reply to the following email.\n\nOriginal Email:\nFrom: hr@company.com\nSubject: Training Session Reminder\nBody:\nHello,\n\nAttached is the document we discussed. Please review and provide feedback by EOD.\n\nThanks\n\nReply Guidelines:\n- Use a professional and friendly tone\n- Address the sender by name if available\n- Acknowledge their request or message\n- For meeting requests: propose 2-3 specific time slots\n- For questions: provide a helpful response or indicate when you'll follow up\n- For action items: confirm receipt and provide a timeline\n- Keep it concise (3-5 sentences)\n\nRespond in JSON format:\n{\n  \"subject\": \"<reply subject line>\",\n  \"body\": \"<reply body text>\",\n  \"tone\": \"<professional/friendly/formal>\",\n  \"suggested_actions\": [\"<follow-up action 1>\", \"<follow-up action 2>\"]\n}",
+    "status": "draft",
+    "custom_instructions": null
+  }
+}

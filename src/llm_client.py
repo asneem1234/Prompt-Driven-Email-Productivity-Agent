@@ -15,7 +15,7 @@ load_dotenv()
 class LLMClient:
     """Handles all LLM interactions with structured prompt/response logging"""
     
-    def __init__(self, model: str = "gemini-1.5-flash"):
+    def __init__(self, model: str = "gemini-2.5-flash"):
         self.api_key = os.getenv("GEMINI_API_KEY")
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY not found in environment variables")
@@ -89,7 +89,7 @@ class LLMClient:
                     "response": parsed_response,
                     "raw_response": raw_response,
                     "prompt_used": prompt,
-                    "model": "gemini-1.5-flash",
+                    "model": "gemini-2.5-flash",
                     "error": None
                 }
                 
@@ -124,7 +124,7 @@ class LLMClient:
                     "response": None,
                     "raw_response": None,
                     "prompt_used": prompt,
-                    "model": "gemini-1.5-flash",
+                    "model": "gemini-2.5-flash",
                     "error": error_msg
                 }
                 self.call_history.append(result)

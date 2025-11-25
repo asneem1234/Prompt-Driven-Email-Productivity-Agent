@@ -59,6 +59,16 @@ def get_or_create_instances():
                 instances['llm_client'],
                 instances['email_processor']
             )
+            
+            # Auto-load inbox from mock data
+            inbox_file = "data/mock_inbox.json"
+            if os.path.exists(inbox_file):
+                with open(inbox_file, 'r', encoding='utf-8') as f:
+                    instances['inbox'] = json.load(f)
+                
+                # Index emails in RAG system immediately
+                instances['email_agent'].rag_system.index_emails(instances['inbox'])
+                print(f"🔍 RAG System initialized with {len(instances['inbox'])} emails")
         else:
             app_instances[session_id] = {
                 'initialized': False,
@@ -203,6 +213,14 @@ def select_email(email_id):
         return jsonify({'success': True})
     
     return jsonify({'success': False, 'error': 'Email not found'})
+
+
+@app.route('/api/deselect-email', methods=['POST'])
+def deselect_email():
+    """Deselect the currently selected email"""
+    instances = get_or_create_instances()
+    instances['selected_email'] = None
+    return jsonify({'success': True})
 
 
 @app.route('/prompt-brain')
@@ -364,6 +382,26 @@ def chat():
     return render_template('chat.html', chat_history=instances['chat_history'])
 
 
+def format_response(text: str) -> str:
+    """Format and clean LLM response for display"""
+    if not text:
+        return text
+    
+    # Remove markdown formatting
+    text = text.replace('**', '')
+    text = text.replace('* *', '')
+    text = text.replace('##', '')
+    
+    # Clean up extra spaces
+    import re
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Format lists properly
+    text = text.replace('* ', '\n• ')
+    
+    return text.strip()
+
+
 @app.route('/api/chat', methods=['POST'])
 def chat_query():
     """Handle chat query"""
@@ -383,12 +421,19 @@ def chat_query():
         )
         
         if result['success']:
+            # Format the response
+            answer = result['response'].get('answer', 'Sorry, I could not process that request.')
+            formatted_answer = format_response(answer)
+            
             # Add to chat history
             instances['chat_history'].append({'role': 'user', 'content': query})
             instances['chat_history'].append({
                 'role': 'assistant', 
-                'content': result['response'].get('answer', 'Sorry, I could not process that request.')
+                'content': formatted_answer
             })
+            
+            # Update result with formatted answer
+            result['response']['answer'] = formatted_answer
         
         return jsonify(result)
     except Exception as e:
