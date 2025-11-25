@@ -62,6 +62,9 @@ INSTRUCTIONS:
 - If asked about specific senders/subjects, look through the relevant emails
 - Provide concrete, actionable responses based on actual email content
 - If no relevant emails found, say so clearly
+- Format your answer in PLAIN TEXT only - NO HTML tags, NO markdown formatting
+- Use simple numbered lists (1. 2. 3.) or bullet points (•) for lists
+- Write in clear, natural paragraphs with proper spacing
 
 Respond in JSON format:
 {{

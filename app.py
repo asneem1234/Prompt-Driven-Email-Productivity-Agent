@@ -387,17 +387,42 @@ def format_response(text: str) -> str:
     if not text:
         return text
     
-    # Remove markdown formatting
-    text = text.replace('**', '')
-    text = text.replace('* *', '')
-    text = text.replace('##', '')
-    
-    # Clean up extra spaces
     import re
-    text = re.sub(r'\s+', ' ', text)
+    from html import unescape
     
-    # Format lists properly
-    text = text.replace('* ', '\n• ')
+    # Remove any HTML tags completely
+    text = re.sub(r'<[^>]+>', '', text)
+    
+    # Unescape any HTML entities
+    text = unescape(text)
+    
+    # Remove markdown bold/italic
+    text = re.sub(r'\*\*([^*]+)\*\*', r'\1', text)  # **bold**
+    text = re.sub(r'\*([^*]+)\*', r'\1', text)      # *italic*
+    
+    # Remove markdown headers
+    text = re.sub(r'^#+\s+', '', text, flags=re.MULTILINE)
+    
+    # Convert numbered lists to cleaner format
+    text = re.sub(r'^\d+\.\s+', '• ', text, flags=re.MULTILINE)
+    
+    # Convert markdown lists to bullet points
+    text = re.sub(r'^\*\s+', '• ', text, flags=re.MULTILINE)
+    text = re.sub(r'^-\s+', '• ', text, flags=re.MULTILINE)
+    
+    # Convert HTML lists to bullet points
+    text = re.sub(r'<li>', '• ', text, flags=re.IGNORECASE)
+    text = re.sub(r'</li>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r'</?ul>', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'</?ol>', '', text, flags=re.IGNORECASE)
+    
+    # Clean up multiple spaces but preserve line breaks
+    lines = text.split('\n')
+    lines = [re.sub(r'\s+', ' ', line).strip() for line in lines]
+    text = '\n'.join(line for line in lines if line)
+    
+    # Add proper spacing after sentences
+    text = re.sub(r'\.([A-Z])', r'. \1', text)
     
     return text.strip()
 
