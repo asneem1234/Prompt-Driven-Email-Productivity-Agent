@@ -16,7 +16,7 @@ if errorlevel 1 (
 )
 
 echo Checking dependencies...
-pip show streamlit >nul 2>&1
+pip show Flask >nul 2>&1
 if errorlevel 1 (
     echo Installing dependencies...
     pip install -r requirements.txt
@@ -25,8 +25,8 @@ if errorlevel 1 (
 echo.
 echo Starting application...
 echo.
-echo The app will open in your browser at http://localhost:8501
+echo The app will open in your browser at http://localhost:5000
 echo Press Ctrl+C to stop the server
 echo.
 
-streamlit run app.py
+python app.py
