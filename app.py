@@ -141,8 +141,10 @@ def inbox():
     
     for processed in instances['processed_emails'].values():
         if processed and isinstance(processed, dict):
-            cat = processed.get('category', {}).get('category', 'Unknown')
-            stats['categories'][cat] = stats['categories'].get(cat, 0) + 1
+            category_data = processed.get('category', {})
+            if category_data and isinstance(category_data, dict):
+                cat = category_data.get('category', 'Unknown')
+                stats['categories'][cat] = stats['categories'].get(cat, 0) + 1
     
     return render_template('inbox.html', 
                          emails=filtered_emails, 
