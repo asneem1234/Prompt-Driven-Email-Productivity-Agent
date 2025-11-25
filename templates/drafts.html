@@ -24,11 +24,11 @@
         <div class="draft-card">
             <div class="draft-header">
                 <div>
-                    <h3>{{ draft.draft_content.subject or 'No Subject' }}</h3>
+                    <h3>{{ draft.subject or draft.draft_content.subject or 'No Subject' }}</h3>
                     {% if draft.in_reply_to %}
-                    <p class="reply-info">In reply to: {{ draft.in_reply_to.subject }} (from {{ draft.in_reply_to.sender }})</p>
+                    <p class="reply-info">In reply to email ID: {{ draft.in_reply_to }}</p>
                     {% endif %}
-                    <p class="draft-date">Created: {{ draft.created_at[:19] }}</p>
+                    <p class="draft-date">Created: {{ (draft.created_at or draft.timestamp)[:19] }}</p>
                 </div>
                 <div class="draft-actions">
                     <button class="btn btn-sm" onclick="viewDraft('{{ draft.id }}')">📄 View</button>
@@ -39,9 +39,9 @@
             
             <div id="draft-{{ draft.id }}" class="draft-body" style="display: none;">
                 <h4>Body:</h4>
-                <div class="draft-text">{{ draft.draft_content.body }}</div>
+                <div class="draft-text">{{ draft.body or draft.draft_content.body }}</div>
                 
-                {% if draft.draft_content.suggested_actions %}
+                {% if draft.draft_content and draft.draft_content.suggested_actions %}
                 <h4>Suggested Follow-ups:</h4>
                 <ul>
                     {% for action in draft.draft_content.suggested_actions %}
