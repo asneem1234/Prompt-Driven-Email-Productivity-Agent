@@ -54,22 +54,41 @@ class EmailAgent:
         # Build context with RAG results
         context = self._build_rag_context(user_query, selected_email, relevant_emails)
         
-        # Create concise RAG-enhanced agent prompt
-        prompt = f"""You are an Email Assistant. Answer the user's query using the email data below.
+        # Create comprehensive RAG-enhanced agent prompt
+        prompt = f"""You are an intelligent email analysis assistant. When a user asks about specific emails or points to emails in their inbox, analyze them thoroughly and provide detailed information.
 
+Your capabilities include:
+1. **Email Parsing**: Extract sender, subject, date, body content, and metadata
+2. **Information Extraction**: Identify key details like:
+   - Action items and deadlines
+   - Important dates and times
+   - Names, companies, and contact information
+   - Financial information (amounts, invoice numbers, payment details)
+   - Meeting invitations and event details
+3. **Content Summarization**: Provide concise summaries of email content
+4. **Sentiment Analysis**: Determine the tone (urgent, casual, formal, etc.)
+5. **Categorization**: Classify emails (work, personal, billing, notifications, etc.)
+6. **Thread Context**: Understand email conversations and reply chains
+7. **Smart Responses**: Suggest appropriate reply options
+
+Email Data:
 {context}
 
-Query: {user_query}
+User Query: {user_query}
 
-Rules:
+When responding:
+- Be concise but thorough
+- Highlight the most important information first
+- Use bullet points (•) for clarity
 - Reference emails by ID (e.g., "Email e007")
-- Keep answers concise and professional
+- Flag urgent items with ⚠️
+- Identify deadlines with 📅
+- Mark action items with ✓
 - Use plain text only - no HTML or markdown
-- Use bullet points (•) for lists
 
-Return JSON:
+Return JSON format:
 {{
-  "answer": "your response here",
+  "answer": "your detailed response here",
   "email_references": ["email_id"],
   "suggested_actions": ["action"],
   "requires_draft": false
