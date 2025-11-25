@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inbox - Email Productivity Agent{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <!-- Gmail Header -->
+    <header class="gmail-header">
+        <div class="header-left">
+            <button class="icon-btn menu-btn">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="gmail-logo">
+                <svg viewBox="0 0 40 32" width="109" height="40">
+                    <path d="M10,10 L10,28 L30,28 L30,10" fill="none" stroke="#EA4335" stroke-width="2"/>
+                    <path d="M10,10 L20,18 L30,10" fill="none" stroke="#FBBC04" stroke-width="2"/>
+                    <path d="M10,10 L20,18 L30,10 L30,28 L10,28 Z" fill="#f2f2f2"/>
+                    <path d="M10,10 L20,18 L30,10" stroke="#34A853" stroke-width="2" fill="none"/>
+                </svg>
+                <span class="logo-text">Gmail</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-bar">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" placeholder="Search mail" class="search-input">
+                <span class="material-icons filter-icon">tune</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn"><span class="material-icons">help_outline</span></button>
+            <button class="icon-btn"><span class="material-icons">settings</span></button>
+            <button class="icon-btn"><span class="material-icons">apps</span></button>
+            <div class="profile-avatar">A</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Gmail Sidebar -->
+        <nav class="sidebar">
+            <div class="compose-section">
+                <a href="{{ url_for('drafts') }}" class="compose-btn">
+                    <span class="material-icons">edit</span>
+                    <span>Compose</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-nav">
+                <a href="{{ url_for('inbox') }}" class="nav-item {% if request.endpoint == 'inbox' %}active{% endif %}">
+                    <span class="material-icons">inbox</span>
+                    <span class="nav-label">Inbox</span>
+                    <span class="nav-count">44</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">star_border</span>
+                    <span class="nav-label">Starred</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">schedule</span>
+                    <span class="nav-label">Snoozed</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">send</span>
+                    <span class="nav-label">Sent</span>
+                </a>
+                <a href="{{ url_for('drafts') }}" class="nav-item {% if request.endpoint == 'drafts' %}active{% endif %}">
+                    <span class="material-icons">drafts</span>
+                    <span class="nav-label">Drafts</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="material-icons">expand_more</span>
+                    <span class="nav-label">More</span>
+                </a>
+            </div>
+            
+            <div class="quick-actions-section">
+                <div class="quick-action-btn" onclick="loadInbox()">
+                    <span class="material-icons">refresh</span>
+                    <span>Load Inbox</span>
+                </div>
+                <div class="quick-action-btn" onclick="processAll()">
+                    <span class="material-icons">auto_fix_high</span>
+                    <span>Process All</span>
+                </div>
+            </div>
+            
+            <div class="labels-section">
+                <div class="labels-header">
+                    <span>Labels</span>
+                    <button class="icon-btn-small"><span class="material-icons">add</span></button>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a href="{{ url_for('chat') }}" class="footer-item">
+                    <span class="material-icons">chat</span>
+                    <span>Chat</span>
+                </a>
+                <a href="{{ url_for('prompt_brain') }}" class="footer-item">
+                    <span class="material-icons">settings</span>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </nav>
+        
+        <main class="main-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Gmail Compose Modal -->
+    <div id="composeModal" class="compose-modal" style="display: none;">
+        <div class="compose-window">
+            <div class="compose-header">
+                <span>New Message</span>
+                <div class="compose-header-actions">
+                    <button class="icon-btn-tiny" onclick="minimizeCompose()" title="Minimize">
+                        <span class="material-icons">minimize</span>
+                    </button>
+                    <button class="icon-btn-tiny" onclick="maximizeCompose()" title="Full screen">
+                        <span class="material-icons">open_in_full</span>
+                    </button>
+                    <button class="icon-btn-tiny" onclick="closeCompose()" title="Close">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+            </div>
+            <div class="compose-body">
+                <div class="compose-field">
+                    <input type="email" placeholder="Recipients" id="composeTo" class="compose-input">
+                    <div class="compose-cc-bcc">
+                        <a href="#" onclick="showCC(); return false;">Cc</a>
+                        <a href="#" onclick="showBCC(); return false;">Bcc</a>
+                    </div>
+                </div>
+                <div class="compose-field" id="ccField" style="display: none;">
+                    <input type="email" placeholder="Cc" id="composeCc" class="compose-input">
+                </div>
+                <div class="compose-field" id="bccField" style="display: none;">
+                    <input type="email" placeholder="Bcc" id="composeBcc" class="compose-input">
+                </div>
+                <div class="compose-field">
+                    <input type="text" placeholder="Subject" id="composeSubject" class="compose-input">
+                </div>
+                <div class="compose-textarea-wrapper">
+                    <textarea id="composeBody" class="compose-textarea" placeholder=""></textarea>
+                </div>
+            </div>
+            <div class="compose-footer">
+                <button class="btn-send" onclick="sendComposedEmail()">
+                    Send
+                    <span class="material-icons">arrow_drop_down</span>
+                </button>
+                <div class="compose-toolbar">
+                    <button class="icon-btn-compose" title="Formatting options">
+                        <span class="material-icons">format_color_text</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Attach files">
+                        <span class="material-icons">attach_file</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Insert link">
+                        <span class="material-icons">link</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Insert emoji">
+                        <span class="material-icons">mood</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Insert files using Drive">
+                        <span class="material-icons">add_to_drive</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Insert photo">
+                        <span class="material-icons">image</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Toggle confidential mode">
+                        <span class="material-icons">lock</span>
+                    </button>
+                    <button class="icon-btn-compose" title="Insert signature">
+                        <span class="material-icons">drive_file_rename_outline</span>
+                    </button>
+                    <button class="icon-btn-compose more-options" title="More options">
+                        <span class="material-icons">more_vert</span>
+                    </button>
+                </div>
+                <button class="icon-btn-compose delete-draft" onclick="deleteComposeDraft()" title="Delete draft">
+                    <span class="material-icons">delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+        
+        // Search functionality
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value;
+                alert('Search functionality: ' + query);
+                // TODO: Implement search
+            }
+        }
+        
+        // Load inbox
+        function loadInbox() {
+            $.post('/api/load-inbox', function(data) {
+                if (data.success) {
+                    alert(`✅ Loaded ${data.count} emails`);
+                    location.reload();
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            });
+        }
+        
+        // Process all emails
+        function processAll() {
+            if (!confirm('Process all emails? This may take a while.')) return;
+            $.post('/api/process-all', function(data) {
+                if (data.success) {
+                    alert(`✅ Processed ${data.count} emails`);
+                    location.reload();
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            });
+        }
+        
+        // Select all emails
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.email-checkbox');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+        
+        // Star email
+        function toggleStar(btn, emailId) {
+            const icon = btn.querySelector('.material-icons');
+            if (icon.textContent === 'star_border') {
+                icon.textContent = 'star';
+                icon.style.color = '#f9ab00';
+            } else {
+                icon.textContent = 'star_border';
+                icon.style.color = '';
+            }
+        }
+        
+        // Important email
+        function toggleImportant(btn, emailId) {
+            const icon = btn.querySelector('.material-icons');
+            if (icon.textContent === 'label_important') {
+                icon.style.color = '#f9ab00';
+            } else {
+                icon.style.color = '';
+            }
+        }
+        
+        // View email details
+        function viewEmail(emailId) {
+            $.post(`/api/select-email/${emailId}`, function(data) {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+        
+        // Show help
+        function showHelp() {
+            alert('Help: This is an AI-powered email productivity agent.\n\nFeatures:\n- Auto-categorization\n- Smart summaries\n- Draft generation\n- Action extraction');
+        }
+        
+        // Show settings
+        function showSettings() {
+            window.location.href = "{{ url_for('prompt_brain') }}";
+        }
+        
+        // Show apps menu
+        function showApps() {
+            alert('Apps menu: Additional Google apps would appear here');
+        }
+        
+        // Refresh inbox
+        function refreshInbox() {
+            location.reload();
+        }
+        
+        // Navigation functions
+        function goToPrevious() {
+            alert('Previous page - not implemented in demo');
+        }
+        
+        function goToNext() {
+            alert('Next page - not implemented in demo');
+        }
+        
+        // More actions menu
+        function showMoreActions() {
+            alert('More actions menu:\n- Mark as read\n- Mark as unread\n- Delete\n- Archive');
+        }
+        
+        // Add event listeners when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menu button
+            const menuBtn = document.querySelector('.menu-btn');
+            if (menuBtn) {
+                menuBtn.addEventListener('click', toggleSidebar);
+            }
+            
+            // Search input
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', handleSearch);
+            }
+            
+            // Help button
+            const helpBtn = document.querySelector('.header-right .icon-btn:nth-child(1)');
+            if (helpBtn) {
+                helpBtn.addEventListener('click', showHelp);
+            }
+            
+            // Settings button  
+            const settingsBtn = document.querySelector('.header-right .icon-btn:nth-child(2)');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', showSettings);
+            }
+            
+            // Apps button
+            const appsBtn = document.querySelector('.header-right .icon-btn:nth-child(3)');
+            if (appsBtn) {
+                appsBtn.addEventListener('click', showApps);
+            }
+        });
+
+        // Compose Modal Functions
+        function openCompose() {
+            document.getElementById('composeModal').style.display = 'block';
+        }
+
+        function closeCompose() {
+            if (confirm('Discard draft?')) {
+                document.getElementById('composeModal').style.display = 'none';
+                // Clear fields
+                document.getElementById('composeTo').value = '';
+                document.getElementById('composeCc').value = '';
+                document.getElementById('composeBcc').value = '';
+                document.getElementById('composeSubject').value = '';
+                document.getElementById('composeBody').value = '';
+                document.getElementById('ccField').style.display = 'none';
+                document.getElementById('bccField').style.display = 'none';
+            }
+        }
+
+        function minimizeCompose() {
+            const modal = document.getElementById('composeModal');
+            const window = modal.querySelector('.compose-window');
+            if (window.classList.contains('minimized')) {
+                window.classList.remove('minimized');
+            } else {
+                window.classList.add('minimized');
+            }
+        }
+
+        function maximizeCompose() {
+            const window = document.querySelector('.compose-window');
+            if (window.classList.contains('maximized')) {
+                window.classList.remove('maximized');
+            } else {
+                window.classList.add('maximized');
+            }
+        }
+
+        function showCC() {
+            document.getElementById('ccField').style.display = 'block';
+        }
+
+        function showBCC() {
+            document.getElementById('bccField').style.display = 'block';
+        }
+
+        function sendComposedEmail() {
+            const to = document.getElementById('composeTo').value;
+            const subject = document.getElementById('composeSubject').value;
+            const body = document.getElementById('composeBody').value;
+            
+            if (!to) {
+                alert('Please specify at least one recipient.');
+                return;
+            }
+            
+            alert(`Email would be sent to: ${to}\nSubject: ${subject}\n\nThis is a demo - actual email sending not implemented.`);
+            document.getElementById('composeModal').style.display = 'none';
+        }
+
+        function deleteComposeDraft() {
+            if (confirm('Delete draft?')) {
+                closeCompose();
+            }
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

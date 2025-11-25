@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Drafts - Email Productivity Agent{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>✉️ Email Drafts</h1>
+    <p class="warning">⚠️ All drafts are saved locally and never sent automatically</p>
+</div>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="showTab('saved')">📝 Saved Drafts</button>
+    <button class="tab-btn" onclick="showTab('new')">➕ New Draft</button>
+</div>
+
+<div id="savedTab" class="tab-content active">
+    {% if drafts|length == 0 %}
+    <div class="info-box">
+        <p>No drafts yet. Reply to an email or create a new draft to get started.</p>
+    </div>
+    {% else %}
+    <div class="drafts-list">
+        {% for draft in drafts %}
+        <div class="draft-card">
+            <div class="draft-header">
+                <div>
+                    <h3>{{ draft.draft_content.subject or 'No Subject' }}</h3>
+                    {% if draft.in_reply_to %}
+                    <p class="reply-info">In reply to: {{ draft.in_reply_to.subject }} (from {{ draft.in_reply_to.sender }})</p>
+                    {% endif %}
+                    <p class="draft-date">Created: {{ draft.created_at[:19] }}</p>
+                </div>
+                <div class="draft-actions">
+                    <button class="btn btn-sm" onclick="viewDraft('{{ draft.id }}')">📄 View</button>
+                    <a href="/api/export-draft/{{ draft.id }}" class="btn btn-sm">📤 Export</a>
+                    <button class="btn btn-sm btn-danger" onclick="deleteDraft('{{ draft.id }}')">🗑️ Delete</button>
+                </div>
+            </div>
+            
+            <div id="draft-{{ draft.id }}" class="draft-body" style="display: none;">
+                <h4>Body:</h4>
+                <div class="draft-text">{{ draft.draft_content.body }}</div>
+                
+                {% if draft.draft_content.suggested_actions %}
+                <h4>Suggested Follow-ups:</h4>
+                <ul>
+                    {% for action in draft.draft_content.suggested_actions %}
+                    <li>{{ action }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div id="newTab" class="tab-content">
+    <div class="new-draft-form">
+        <h2>Create New Email Draft</h2>
+        
+        <div class="form-group">
+            <label for="recipient">To:</label>
+            <input type="email" id="recipient" class="form-control" placeholder="recipient@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" class="form-control" placeholder="Email subject">
+        </div>
+        
+        <div class="form-group">
+            <label for="context">Context/Instructions:</label>
+            <textarea id="context" rows="6" class="form-control" placeholder="Describe what the email should be about..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="tone">Tone:</label>
+            <select id="tone" class="form-control">
+                <option value="professional">Professional</option>
+                <option value="friendly">Friendly</option>
+                <option value="formal">Formal</option>
+            </select>
+        </div>
+        
+        <button class="btn btn-primary" onclick="generateNewDraft()">✨ Generate Draft</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showTab(tab) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        // Show selected tab
+        if (tab === 'saved') {
+            document.getElementById('savedTab').classList.add('active');
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        } else {
+            document.getElementById('newTab').classList.add('active');
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        }
+    }
+    
+    function viewDraft(draftId) {
+        const draftBody = document.getElementById('draft-' + draftId);
+        draftBody.style.display = draftBody.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    function deleteDraft(draftId) {
+        if (!confirm('Delete this draft?')) return;
+        
+        $.ajax({
+            url: `/api/delete-draft/${draftId}`,
+            method: 'DELETE',
+            success: function(data) {
+                if (data.success) {
+                    alert('✅ Draft deleted!');
+                    location.reload();
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            }
+        });
+    }
+    
+    function generateNewDraft() {
+        const recipient = document.getElementById('recipient').value;
+        const subject = document.getElementById('subject').value;
+        const context = document.getElementById('context').value;
+        const tone = document.getElementById('tone').value;
+        
+        if (!recipient || !subject || !context) {
+            alert('Please fill in all fields');
+            return;
+        }
+        
+        $.ajax({
+            url: '/api/generate-new-draft',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                recipient: recipient,
+                subject: subject,
+                context: context,
+                tone: tone
+            }),
+            success: function(data) {
+                if (data.success) {
+                    alert('✅ Draft created!');
+                    location.reload();
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

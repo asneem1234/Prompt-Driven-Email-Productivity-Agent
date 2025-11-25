@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Setup - Email Productivity Agent{% endblock %}
+
+{% block content %}
+<div class="setup-container">
+    <div class="setup-card">
+        <h1>📧 Email Productivity Agent</h1>
+        <p>Configure your Google Gemini API key to get started</p>
+        
+        <form method="POST" action="{{ url_for('setup') }}">
+            <div class="form-group">
+                <label for="api_key">Google Gemini API Key</label>
+                <input type="password" id="api_key" name="api_key" class="form-control" required placeholder="Enter your API key">
+                <small>Get your free API key from: <a href="https://makersuite.google.com/app/apikey" target="_blank">https://makersuite.google.com/app/apikey</a></small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Initialize Application</button>
+        </form>
+        
+        <div class="features">
+            <h3>🎯 Features</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h4>📥 Inbox Management</h4>
+                    <p>Load and process emails efficiently</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🏷️ Auto-Categorization</h4>
+                    <p>Intelligent email sorting</p>
+                </div>
+                <div class="feature-item">
+                    <h4>✅ Action Extraction</h4>
+                    <p>Automatic task identification</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📝 Smart Summaries</h4>
+                    <p>Quick email overviews</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🧠 Prompt Brain</h4>
+                    <p>Customize agent behavior</p>
+                </div>
+                <div class="feature-item">
+                    <h4>✉️ Draft Generation</h4>
+                    <p>AI-powered email replies</p>
+                </div>
+                <div class="feature-item">
+                    <h4>💬 Email Agent Chat</h4>
+                    <p>Natural language inbox queries</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔒 Safety First</h4>
+                    <p>Drafts only, never sends</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .setup-container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+    
+    .setup-card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .setup-card h1 {
+        color: #1f77b4;
+        margin-bottom: 10px;
+    }
+    
+    .form-group {
+        margin: 30px 0;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+    
+    .form-group small {
+        display: block;
+        margin-top: 8px;
+        color: #666;
+    }
+    
+    .features {
+        margin-top: 40px;
+    }
+    
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .feature-item {
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 8px;
+    }
+    
+    .feature-item h4 {
+        margin: 0 0 8px 0;
+        color: #1f77b4;
+    }
+    
+    .feature-item p {
+        margin: 0;
+        color: #666;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}

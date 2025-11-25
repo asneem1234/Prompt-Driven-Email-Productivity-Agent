@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Prompt Brain - Email Productivity Agent{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🧠 Prompt Brain</h1>
+    <p>Configure the prompts that control the agent's behavior</p>
+</div>
+
+<div class="prompt-container">
+    <div class="prompt-selector">
+        <label for="promptType">Select Prompt to Edit:</label>
+        <select id="promptType" onchange="selectPrompt()">
+            {% for key, value in prompts.items() %}
+            <option value="{{ key }}" {% if key == selected_type %}selected{% endif %}>{{ value.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    {% if selected_type and prompts[selected_type] %}
+    <div class="prompt-editor">
+        <h2>{{ prompts[selected_type].name }}</h2>
+        <p class="prompt-description">{{ prompts[selected_type].description }}</p>
+        
+        <div class="form-group">
+            <label for="promptText">Prompt Template:</label>
+            <textarea id="promptText" rows="15" class="form-control">{{ prompts[selected_type].prompt }}</textarea>
+            <small>Use {sender}, {subject}, {body} as placeholders</small>
+        </div>
+        
+        <button class="btn btn-primary" onclick="savePrompt()">💾 Save Prompt</button>
+        <button class="btn btn-secondary" onclick="resetPrompt()">🔄 Reset to Default</button>
+        
+        <div class="prompt-test">
+            <h3>🧪 Test Prompt</h3>
+            {% if inbox|length > 0 %}
+            <select id="testEmail" class="form-control">
+                {% for email in inbox %}
+                <option value="{{ email.id }}">{{ email.subject[:50] }}...</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" onclick="testPrompt()">🚀 Test Prompt</button>
+            
+            <div id="testResult" style="display: none;">
+                <h4>Formatted Prompt:</h4>
+                <pre id="formattedPrompt"></pre>
+                
+                <h4>LLM Response:</h4>
+                <pre id="llmResponse"></pre>
+            </div>
+            {% else %}
+            <p class="info-box">Load inbox first to test prompts</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function selectPrompt() {
+        const type = document.getElementById('promptType').value;
+        window.location.href = `{{ url_for('prompt_brain') }}?type=${type}`;
+    }
+    
+    function savePrompt() {
+        const type = document.getElementById('promptType').value;
+        const prompt = document.getElementById('promptText').value;
+        
+        $.ajax({
+            url: '/api/update-prompt',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({type: type, prompt: prompt}),
+            success: function(data) {
+                if (data.success) {
+                    alert('✅ Prompt saved!');
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            }
+        });
+    }
+    
+    function resetPrompt() {
+        if (!confirm('Reset prompt to default? This cannot be undone.')) return;
+        location.reload();
+    }
+    
+    function testPrompt() {
+        const prompt = document.getElementById('promptText').value;
+        const emailId = document.getElementById('testEmail').value;
+        
+        $.ajax({
+            url: '/api/test-prompt',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({prompt: prompt, email_id: emailId}),
+            success: function(data) {
+                if (data.success) {
+                    document.getElementById('formattedPrompt').textContent = data.formatted_prompt;
+                    document.getElementById('llmResponse').textContent = JSON.stringify(data.response, null, 2);
+                    document.getElementById('testResult').style.display = 'block';
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}
