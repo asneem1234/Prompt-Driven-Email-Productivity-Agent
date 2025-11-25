@@ -323,16 +323,8 @@
     "starred": true,
     "important": false,
     "folder": "inbox"
-  },
-  {
-    "id": "e026",
-    "sender": "emma.wilson@consulting.com",
-    "sender_name": "Emma Wilson",
-    "subject": "Re: Contract Renewal Discussion",
-    "timestamp": "2025-11-09T11:05:12.428802Z",
-    "body": "Hi,\n\nJust wanted to follow up on our previous discussion. Please let me know your thoughts.\n\nBest regards",
-    "thread_id": "thread_026",
-    "read": false,
+  }
+]
     "starred": false,
     "important": false,
     "folder": "inbox"
