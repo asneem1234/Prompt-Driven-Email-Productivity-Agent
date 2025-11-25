@@ -66,6 +66,18 @@ class LLMClient:
                     generation_config=generation_config
                 )
                 
+                # Check if response was blocked by safety filters
+                if not response.candidates or not response.candidates[0].content.parts:
+                    finish_reason = response.candidates[0].finish_reason if response.candidates else "UNKNOWN"
+                    return {
+                        "success": False,
+                        "response": None,
+                        "raw_response": None,
+                        "prompt_used": prompt,
+                        "model": "gemini-2.5-flash",
+                        "error": f"Response blocked (finish_reason: {finish_reason}). Try asking in a different way or with less context."
+                    }
+                
                 raw_response = response.text
                 
                 # Try to parse JSON response

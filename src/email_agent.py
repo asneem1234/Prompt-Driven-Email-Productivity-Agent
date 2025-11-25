@@ -123,7 +123,7 @@ Respond in JSON format:
             context_parts.append(f"    From: {email.get('sender_name', email.get('sender'))}")
             context_parts.append(f"    Subject: {email.get('subject')}")
             context_parts.append(f"    Date: {email.get('timestamp', 'Unknown')[:10]}")
-            context_parts.append(f"    Preview: {email.get('body', '')[:200]}...")
+            context_parts.append(f"    Preview: {email.get('body', '')[:100]}...")
             
             # Add flags
             flags = []
