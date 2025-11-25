@@ -67,13 +67,12 @@
                     const answer = data.response.answer || 'Sorry, I could not process that request.';
                     addMessage('assistant', answer);
                     
-                    if (data.response.suggested_actions) {
-                        let actions = '<strong>Suggested Actions:</strong><ul>';
+                    if (data.response.suggested_actions && data.response.suggested_actions.length > 0) {
+                        let actions = '\n\nSuggested Actions:\n';
                         data.response.suggested_actions.forEach(action => {
-                            actions += `<li>${action}</li>`;
+                            actions += `• ${action}\n`;
                         });
-                        actions += '</ul>';
-                        addMessage('assistant', actions);
+                        addMessage('assistant', actions.trim());
                     }
                 } else {
                     addMessage('assistant', `❌ Error: ${data.error}`);
