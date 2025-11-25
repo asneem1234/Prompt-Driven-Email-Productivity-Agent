@@ -234,22 +234,34 @@ def categorize_all():
     
     try:
         processed_count = 0
+        failed_count = 0
+        
         for email in instances['inbox']:
             if email['id'] not in instances['processed_emails']:
-                result = instances['email_processor'].process_email(email)
-                instances['processed_emails'][email['id']] = result
-                
-                # Add category to email object for display
-                if result and result.get('category'):
-                    email['processed'] = result
-                
-                processed_count += 1
-                
-                # Small delay to avoid rate limits (only categorization uses fast model)
-                if processed_count % 10 == 0:
-                    time.sleep(0.5)
+                try:
+                    result = instances['email_processor'].process_email(email)
+                    instances['processed_emails'][email['id']] = result
+                    
+                    # Add category to email object for display
+                    if result and result.get('category'):
+                        email['processed'] = result
+                    
+                    processed_count += 1
+                    
+                    # Significant delay to avoid rate limits - 1 second per email
+                    time.sleep(1.2)
+                    
+                except Exception as e:
+                    # Skip failed emails and continue
+                    failed_count += 1
+                    print(f"Failed to categorize email {email['id']}: {str(e)}")
+                    continue
         
-        return jsonify({'success': True, 'processed': processed_count})
+        return jsonify({
+            'success': True, 
+            'processed': processed_count,
+            'failed': failed_count
+        })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 

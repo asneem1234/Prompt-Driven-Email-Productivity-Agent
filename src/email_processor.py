@@ -78,12 +78,22 @@ class EmailProcessor:
         """Categorize email using fast model to avoid rate limits"""
         prompt = self.prompt_manager.format_prompt("categorization", email)
         
-        # Use faster Gemini 1.5 Flash for categorization to avoid rate limits
+        # Use faster Gemini 1.5 Flash for categorization
+        # No retry logic - let the caller handle rate limits with delays
         try:
             response = self.fast_model.generate_content(
                 prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON.",
                 generation_config={"temperature": 0.3, "max_output_tokens": 500}
             )
+            
+            # Check for safety blocks
+            if not response.candidates or not response.candidates[0].content.parts:
+                return {
+                    "success": False,
+                    "response": {"category": "Other", "confidence": 0.5, "reasoning": "Content filtered"},
+                    "error": "Content filtered by safety",
+                    "model": "gemini-1.5-flash"
+                }
             
             # Parse response
             raw_response = response.text.strip()
@@ -100,9 +110,10 @@ class EmailProcessor:
                 "model": "gemini-1.5-flash"
             }
         except Exception as e:
+            # Return default category on error
             return {
                 "success": False,
-                "response": None,
+                "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
                 "error": str(e),
                 "model": "gemini-1.5-flash"
             }
