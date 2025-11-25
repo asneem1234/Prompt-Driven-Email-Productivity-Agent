@@ -237,25 +237,32 @@ def categorize_all():
         failed_count = 0
         
         for email in instances['inbox']:
-            if email['id'] not in instances['processed_emails']:
-                try:
-                    result = instances['email_processor'].process_email(email)
-                    instances['processed_emails'][email['id']] = result
-                    
-                    # Add category to email object for display
-                    if result and result.get('category'):
-                        email['processed'] = result
-                    
+            # Only categorize, don't do full processing (action extraction, summarization)
+            try:
+                # Call categorize directly, not process_email
+                category_result = instances['email_processor'].categorize_email(email)
+                
+                if category_result.get('success'):
+                    # Store minimal processed data
+                    processed = {
+                        'email': email,
+                        'category': category_result.get('response'),
+                        'processed_at': datetime.now().isoformat()
+                    }
+                    instances['processed_emails'][email['id']] = processed
+                    email['processed'] = processed
                     processed_count += 1
-                    
-                    # Significant delay to avoid rate limits - 1 second per email
-                    time.sleep(1.2)
-                    
-                except Exception as e:
-                    # Skip failed emails and continue
+                else:
                     failed_count += 1
-                    print(f"Failed to categorize email {email['id']}: {str(e)}")
-                    continue
+                
+                # Significant delay to avoid rate limits - 1.5 seconds per email
+                time.sleep(1.5)
+                
+            except Exception as e:
+                # Skip failed emails and continue
+                failed_count += 1
+                print(f"Failed to categorize email {email['id']}: {str(e)}")
+                continue
         
         return jsonify({
             'success': True, 
