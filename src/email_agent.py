@@ -39,39 +39,33 @@ class EmailAgent:
             self.rag_system.index_emails(context_emails)
         
         # Use RAG to retrieve relevant emails
-        relevant_emails = self.rag_system.retrieve_relevant_emails(user_query, top_k=10)
+        # For summary/overview queries, use fewer emails to avoid safety blocks
+        is_summary_query = any(word in user_query.lower() for word in ['summary', 'overview', 'all emails', 'everything', 'inbox'])
+        top_k = 3 if is_summary_query else 5
+        relevant_emails = self.rag_system.retrieve_relevant_emails(user_query, top_k=top_k)
         
         # Build context with RAG results
         context = self._build_rag_context(user_query, selected_email, relevant_emails)
         
-        # Create RAG-enhanced agent prompt
-        prompt = f"""You are an intelligent Email Productivity Agent with RAG (Retrieval-Augmented Generation) capabilities.
-
-CONTEXT PROVIDED:
-The system has already retrieved the most relevant emails for this query using semantic search.
-Use this pre-filtered context to provide accurate, specific answers.
+        # Create concise RAG-enhanced agent prompt
+        prompt = f"""You are an Email Assistant. Answer the user's query using the email data below.
 
 {context}
 
-User Query: {user_query}
+Query: {user_query}
 
-INSTRUCTIONS:
-- Use the RELEVANT EMAILS section above - these are the most important emails for this query
-- Reference specific emails by their ID when answering
-- Use the statistics to provide counts and summaries
-- If asked about specific senders/subjects, look through the relevant emails
-- Provide concrete, actionable responses based on actual email content
-- If no relevant emails found, say so clearly
-- Format your answer in PLAIN TEXT only - NO HTML tags, NO markdown formatting
-- Use simple numbered lists (1. 2. 3.) or bullet points (•) for lists
-- Write in clear, natural paragraphs with proper spacing
+Rules:
+- Reference emails by ID (e.g., "Email e007")
+- Keep answers concise and professional
+- Use plain text only - no HTML or markdown
+- Use bullet points (•) for lists
 
-Respond in JSON format:
+Return JSON:
 {{
-  "answer": "<detailed response referencing specific emails from the context above>",
-  "email_references": ["<email_id_1>", "<email_id_2>"],
-  "suggested_actions": ["<action 1>", "<action 2>"],
-  "requires_draft": <true/false>
+  "answer": "your response here",
+  "email_references": ["email_id"],
+  "suggested_actions": ["action"],
+  "requires_draft": false
 }}"""
         
         result = self.llm_client.call_llm(prompt, temperature=0.7, max_tokens=1500)
@@ -94,14 +88,10 @@ Respond in JSON format:
         """Build RAG-enhanced context with relevant emails"""
         context_parts = []
         
-        # Add email statistics
+        # Add email statistics (simplified for safety)
         stats = self.rag_system.get_stats()
-        context_parts.append("=== EMAIL DATABASE STATISTICS ===")
-        context_parts.append(f"Total Emails: {stats['total_emails']}")
-        context_parts.append(f"Unread: {stats['unread']}")
-        context_parts.append(f"Starred: {stats['starred']}")
-        context_parts.append(f"Important: {stats['important']}")
-        context_parts.append(f"Folders: {stats['folders']}")
+        context_parts.append("EMAIL STATS:")
+        context_parts.append(f"Total: {stats['total_emails']}, Unread: {stats['unread']}, Starred: {stats['starred']}, Important: {stats['important']}")
         context_parts.append("")
         
         # Add selected email if present
@@ -126,7 +116,7 @@ Respond in JSON format:
             context_parts.append(f"    From: {email.get('sender_name', email.get('sender'))}")
             context_parts.append(f"    Subject: {email.get('subject')}")
             context_parts.append(f"    Date: {email.get('timestamp', 'Unknown')[:10]}")
-            context_parts.append(f"    Preview: {email.get('body', '')[:100]}...")
+            context_parts.append(f"    Preview: {email.get('body', '')[:80]}...")
             
             # Add flags
             flags = []
