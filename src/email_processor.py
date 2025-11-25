@@ -21,7 +21,7 @@ class EmailProcessor:
         
         # Create a separate fast model for categorization to avoid rate limits
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        self.fast_model = genai.GenerativeModel("gemini-1.5-flash")
+        self.fast_model = genai.GenerativeModel("gemini-2.0-flash-exp")
     
     def process_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """

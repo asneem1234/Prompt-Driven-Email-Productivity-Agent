@@ -15,7 +15,7 @@ load_dotenv()
 class LLMClient:
     """Handles all LLM interactions with structured prompt/response logging"""
     
-    def __init__(self, model: str = "gemini-1.5-flash"):
+    def __init__(self, model: str = "gemini-2.0-flash-exp"):
         self.api_key = os.getenv("GEMINI_API_KEY")
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY not found in environment variables")
