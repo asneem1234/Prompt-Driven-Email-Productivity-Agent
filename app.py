@@ -448,5 +448,8 @@ def clear_chat():
     return jsonify({'success': True})
 
 
+# For Vercel serverless deployment
+application = app
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
