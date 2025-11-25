@@ -235,12 +235,19 @@ def categorize_all():
     try:
         processed_count = 0
         failed_count = 0
+        total_emails = len(instances['inbox'])
         
-        for email in instances['inbox']:
-            # Only categorize, don't do full processing (action extraction, summarization)
+        print(f"\n🔍 DEBUG: Starting categorization of {total_emails} emails")
+        
+        for idx, email in enumerate(instances['inbox'], 1):
+            # Categorize all emails (even if already processed)
             try:
+                print(f"📧 [{idx}/{total_emails}] Categorizing email {email['id']}: {email['subject'][:50]}")
+                
                 # Call categorize directly, not process_email
                 category_result = instances['email_processor'].categorize_email(email)
+                
+                print(f"   Result: {category_result.get('success')} - {category_result.get('response', {}).get('category', 'Unknown')}")
                 
                 if category_result.get('success'):
                     # Store minimal processed data
@@ -254,6 +261,7 @@ def categorize_all():
                     processed_count += 1
                 else:
                     failed_count += 1
+                    print(f"   ⚠️ Failed: {category_result.get('error', 'Unknown error')}")
                 
                 # Significant delay to avoid rate limits - 1.5 seconds per email
                 time.sleep(1.5)
@@ -261,8 +269,12 @@ def categorize_all():
             except Exception as e:
                 # Skip failed emails and continue
                 failed_count += 1
-                print(f"Failed to categorize email {email['id']}: {str(e)}")
+                print(f"   ❌ Exception: {str(e)}")
+                import traceback
+                traceback.print_exc()
                 continue
+        
+        print(f"\n✅ Categorization complete: {processed_count} success, {failed_count} failed\n")
         
         return jsonify({
             'success': True, 
@@ -270,6 +282,9 @@ def categorize_all():
             'failed': failed_count
         })
     except Exception as e:
+        print(f"\n❌ FATAL ERROR in categorize_all: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)})
 
 

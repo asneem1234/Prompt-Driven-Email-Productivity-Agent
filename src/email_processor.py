@@ -78,13 +78,16 @@ class EmailProcessor:
         """Categorize email using fast model to avoid rate limits"""
         prompt = self.prompt_manager.format_prompt("categorization", email)
         
-        # Use faster Gemini 1.5 Flash for categorization
+        # Use faster Gemini 2.0 Flash for categorization
         # No retry logic - let the caller handle rate limits with delays
         try:
+            print(f"      🤖 Calling Gemini API for email {email['id']}...")
             response = self.fast_model.generate_content(
                 prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON.",
-                generation_config={"temperature": 0.3, "max_output_tokens": 500}
+                generation_config={"temperature": 0.3, "max_output_tokens": 500},
+                request_options={"timeout": 60}
             )
+            print(f"      ✓ API response received")
             
             # Check for safety blocks
             if not response.candidates or not response.candidates[0].content.parts:
@@ -103,19 +106,21 @@ class EmailProcessor:
                 raw_response = raw_response.split("```")[1].split("```")[0].strip()
             
             parsed_response = json.loads(raw_response)
+            print(f"      ✓ Parsed category: {parsed_response.get('category', 'Unknown')}")
             return {
                 "success": True,
                 "response": parsed_response,
                 "raw_response": raw_response,
-                "model": "gemini-1.5-flash"
+                "model": "gemini-2.0-flash-exp"
             }
         except Exception as e:
             # Return default category on error
+            print(f"      ❌ Categorization error: {str(e)}")
             return {
                 "success": False,
                 "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
                 "error": str(e),
-                "model": "gemini-1.5-flash"
+                "model": "gemini-2.0-flash-exp"
             }
     
     def extract_actions(self, email: Dict[str, Any]) -> Dict[str, Any]:
