@@ -244,6 +244,10 @@ def categorize_all():
                     email['processed'] = result
                 
                 processed_count += 1
+                
+                # Small delay to avoid rate limits (only categorization uses fast model)
+                if processed_count % 10 == 0:
+                    time.sleep(0.5)
         
         return jsonify({'success': True, 'processed': processed_count})
     except Exception as e:

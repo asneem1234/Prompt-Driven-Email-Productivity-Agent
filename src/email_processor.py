@@ -8,6 +8,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 from src.llm_client import LLMClient
 from src.prompt_manager import PromptManager
+import google.generativeai as genai
 
 
 class EmailProcessor:
@@ -17,6 +18,10 @@ class EmailProcessor:
         self.llm_client = llm_client
         self.prompt_manager = prompt_manager
         self.processed_emails = {}
+        
+        # Create a separate fast model for categorization to avoid rate limits
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+        self.fast_model = genai.GenerativeModel("gemini-1.5-flash")
     
     def process_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -70,9 +75,37 @@ class EmailProcessor:
         return processed
     
     def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
-        """Categorize email using LLM"""
+        """Categorize email using fast model to avoid rate limits"""
         prompt = self.prompt_manager.format_prompt("categorization", email)
-        return self.llm_client.call_llm(prompt, temperature=0.3)
+        
+        # Use faster Gemini 1.5 Flash for categorization to avoid rate limits
+        try:
+            response = self.fast_model.generate_content(
+                prompt + "\n\nIMPORTANT: Respond with ONLY valid JSON.",
+                generation_config={"temperature": 0.3, "max_output_tokens": 500}
+            )
+            
+            # Parse response
+            raw_response = response.text.strip()
+            if raw_response.startswith("```json"):
+                raw_response = raw_response.split("```json")[1].split("```")[0].strip()
+            elif raw_response.startswith("```"):
+                raw_response = raw_response.split("```")[1].split("```")[0].strip()
+            
+            parsed_response = json.loads(raw_response)
+            return {
+                "success": True,
+                "response": parsed_response,
+                "raw_response": raw_response,
+                "model": "gemini-1.5-flash"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "response": None,
+                "error": str(e),
+                "model": "gemini-1.5-flash"
+            }
     
     def extract_actions(self, email: Dict[str, Any]) -> Dict[str, Any]:
         """Extract action items from email"""
