@@ -319,7 +319,7 @@ def prompt_brain():
 
 @app.route('/api/update-prompt', methods=['POST'])
 def update_prompt():
-    """Update a prompt"""
+    """Update a prompt (stored in session for Vercel compatibility)"""
     instances = get_or_create_instances()
     
     data = request.json
@@ -331,14 +331,21 @@ def update_prompt():
         all_prompts = prompt_manager.get_all_prompts()
         
         if prompt_type in all_prompts:
+            # Update in memory (session storage)
             prompt_data = all_prompts[prompt_type]
             prompt_data['prompt'] = new_prompt
-            prompt_manager.update_prompt(prompt_type, prompt_data)
-            return jsonify({'success': True})
+            prompt_manager.prompts[prompt_type] = prompt_data
+            
+            # Store in session for persistence during current session
+            if 'custom_prompts' not in instances:
+                instances['custom_prompts'] = {}
+            instances['custom_prompts'][prompt_type] = prompt_data
+            
+            return jsonify({'success': True, 'message': 'Prompt updated successfully (session only)'})
         
         return jsonify({'success': False, 'error': 'Prompt type not found'})
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        return jsonify({'success': False, 'error': f'Failed to update prompt: {str(e)}'})
 
 
 @app.route('/api/test-prompt', methods=['POST'])
@@ -356,23 +363,29 @@ def test_prompt():
         return jsonify({'success': False, 'error': 'Email not found'})
     
     try:
-        # Format prompt
-        formatted_prompt = prompt_template.format(
-            sender=email.get('sender', ''),
-            subject=email.get('subject', ''),
-            body=email.get('body', '')
-        )
+        # Format prompt - replace placeholders manually to avoid format string issues
+        formatted_prompt = prompt_template.replace('{sender}', email.get('sender', ''))
+        formatted_prompt = formatted_prompt.replace('{subject}', email.get('subject', ''))
+        formatted_prompt = formatted_prompt.replace('{body}', email.get('body', '')[:500])  # Limit body length
         
-        # Call LLM
+        # Call LLM with error handling
         result = instances['llm_client'].call_llm(formatted_prompt)
+        
+        # Clean up response - remove newlines before quotes
+        if result:
+            result = result.replace('\n  "', '"').replace('\n"', '"').strip()
         
         return jsonify({
             'success': True,
-            'formatted_prompt': formatted_prompt,
+            'formatted_prompt': formatted_prompt[:500] + '...' if len(formatted_prompt) > 500 else formatted_prompt,
             'response': result
         })
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        error_msg = str(e)
+        # Make error messages more user-friendly
+        if 'category' in error_msg:
+            error_msg = 'LLM response formatting issue. Please try again.'
+        return jsonify({'success': False, 'error': error_msg})
 
 
 @app.route('/drafts')

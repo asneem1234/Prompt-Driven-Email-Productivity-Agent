@@ -28,16 +28,21 @@ class PromptManager:
             self.save_prompts()
     
     def save_prompts(self):
-        """Save prompts to JSON file"""
-        os.makedirs(os.path.dirname(self.prompts_file), exist_ok=True)
-        with open(self.prompts_file, 'w', encoding='utf-8') as f:
-            json.dump(self.prompts, f, indent=2, ensure_ascii=False)
-        
-        # Add to history
-        self.prompt_history.append({
-            "timestamp": datetime.now().isoformat(),
-            "prompts": self.prompts.copy()
-        })
+        """Save prompts to JSON file (only if writable, otherwise keep in memory)"""
+        try:
+            os.makedirs(os.path.dirname(self.prompts_file), exist_ok=True)
+            with open(self.prompts_file, 'w', encoding='utf-8') as f:
+                json.dump(self.prompts, f, indent=2, ensure_ascii=False)
+            
+            # Add to history
+            self.prompt_history.append({
+                "timestamp": datetime.now().isoformat(),
+                "prompts": self.prompts.copy()
+            })
+        except (OSError, IOError, PermissionError) as e:
+            # Read-only file system (e.g., Vercel) - just keep in memory
+            print(f"Warning: Cannot write to file system: {e}. Prompts stored in memory only.")
+            pass
     
     def get_prompt(self, prompt_type: str) -> Optional[Dict[str, Any]]:
         """Get a specific prompt by type"""
