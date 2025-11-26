@@ -319,7 +319,7 @@ def prompt_brain():
 
 @app.route('/api/update-prompt', methods=['POST'])
 def update_prompt():
-    """Update a prompt (stored in session for Vercel compatibility)"""
+    """Update a prompt"""
     instances = get_or_create_instances()
     
     data = request.json
@@ -331,21 +331,18 @@ def update_prompt():
         all_prompts = prompt_manager.get_all_prompts()
         
         if prompt_type in all_prompts:
-            # Update in memory (session storage)
             prompt_data = all_prompts[prompt_type]
             prompt_data['prompt'] = new_prompt
-            prompt_manager.prompts[prompt_type] = prompt_data
-            
-            # Store in session for persistence during current session
-            if 'custom_prompts' not in instances:
-                instances['custom_prompts'] = {}
-            instances['custom_prompts'][prompt_type] = prompt_data
-            
-            return jsonify({'success': True, 'message': 'Prompt updated successfully (session only)'})
+            prompt_manager.update_prompt(prompt_type, prompt_data)
+            # If running on a read-only filesystem (e.g., Vercel), the
+            # PromptManager will store prompts in memory and set `read_only`.
+            if getattr(prompt_manager, 'read_only', False):
+                return jsonify({'success': True, 'message': 'Prompts saved in memory only (read-only filesystem). Changes are ephemeral.'})
+            return jsonify({'success': True})
         
         return jsonify({'success': False, 'error': 'Prompt type not found'})
     except Exception as e:
-        return jsonify({'success': False, 'error': f'Failed to update prompt: {str(e)}'})
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @app.route('/api/test-prompt', methods=['POST'])
@@ -363,29 +360,45 @@ def test_prompt():
         return jsonify({'success': False, 'error': 'Email not found'})
     
     try:
-        # Format prompt - replace placeholders manually to avoid format string issues
-        formatted_prompt = prompt_template.replace('{sender}', email.get('sender', ''))
-        formatted_prompt = formatted_prompt.replace('{subject}', email.get('subject', ''))
-        formatted_prompt = formatted_prompt.replace('{body}', email.get('body', '')[:500])  # Limit body length
-        
-        # Call LLM with error handling
+        # Use safe placeholder replacement to avoid KeyError when the
+        # template contains braces for JSON or other purposes.
+        formatted_prompt = (prompt_template
+            .replace('{sender}', email.get('sender', ''))
+            .replace('{subject}', email.get('subject', ''))
+            .replace('{body}', email.get('body', ''))
+        )
+
+        # Call LLM
         result = instances['llm_client'].call_llm(formatted_prompt)
-        
-        # Clean up response - remove newlines before quotes
-        if result:
-            result = result.replace('\n  "', '"').replace('\n"', '"').strip()
-        
+
+        # If the LLM reported a JSON parse failure, try to extract JSON
+        # from the raw_response by finding the first {...} block.
+        parsed = None
+        if result.get('success'):
+            parsed = result.get('response')
+            # If parsed indicates a parse error, attempt extraction
+            if isinstance(parsed, dict) and parsed.get('error') and result.get('raw_response'):
+                import re
+                raw = result.get('raw_response') or ''
+                m = re.search(r"\{[\s\S]*\}", raw)
+                if m:
+                    try:
+                        import json as _json
+                        parsed = _json.loads(m.group(0))
+                    except Exception:
+                        # leave parsed as the original error dict
+                        pass
+
+        # Always return the formatted prompt and either the structured
+        # parsed response or the raw response for display/debugging.
         return jsonify({
             'success': True,
-            'formatted_prompt': formatted_prompt[:500] + '...' if len(formatted_prompt) > 500 else formatted_prompt,
-            'response': result
+            'formatted_prompt': formatted_prompt,
+            'response': parsed if parsed is not None else result,
+            'raw_response': result.get('raw_response') if isinstance(result, dict) else None
         })
     except Exception as e:
-        error_msg = str(e)
-        # Make error messages more user-friendly
-        if 'category' in error_msg:
-            error_msg = 'LLM response formatting issue. Please try again.'
-        return jsonify({'success': False, 'error': error_msg})
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @app.route('/drafts')
