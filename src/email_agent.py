@@ -282,9 +282,12 @@ Generate a suitable reply."""
         
         if result.get('success'):
             reply_data = result.get('response', {})
+            # The prompt returns 'body' but we need 'reply_body' for the frontend
+            # Handle both cases for flexibility
+            reply_body = reply_data.get('reply_body') or reply_data.get('body', '')
             return {
                 'success': True,
-                'reply_body': reply_data.get('reply_body', ''),
+                'reply_body': reply_body,
                 'subject': reply_data.get('subject', f"Re: {email.get('subject', '')}"),
                 'original_email_id': email.get('id')
             }
