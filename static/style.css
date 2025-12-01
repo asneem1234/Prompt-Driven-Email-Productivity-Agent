@@ -1365,6 +1365,7 @@ body {
 
 .compose-textarea {
     width: 100%;
+    min-height: 200px;
     border: none;
     outline: none;
     resize: none;

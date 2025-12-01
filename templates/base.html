@@ -44,10 +44,10 @@
         <!-- Gmail Sidebar -->
         <nav class="sidebar">
             <div class="compose-section">
-                <a href="{{ url_for('drafts') }}" class="compose-btn">
+                <button class="compose-btn" onclick="openCompose()">
                     <span class="material-icons">edit</span>
                     <span>Compose</span>
-                </a>
+                </button>
             </div>
             
             <div class="sidebar-nav">
@@ -390,8 +390,37 @@
                 return;
             }
             
-            alert(`Email would be sent to: ${to}\nSubject: ${subject}\n\nThis is a demo - actual email sending not implemented.`);
-            document.getElementById('composeModal').style.display = 'none';
+            if (!body) {
+                alert('Please write a message.');
+                return;
+            }
+            
+            // Save as draft (we don't actually send emails)
+            $.ajax({
+                url: '/api/save-draft',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    to: to,
+                    subject: subject || '(no subject)',
+                    body: body
+                }),
+                success: function(data) {
+                    if (data.success) {
+                        alert('✅ Email saved as draft!\n\n(For safety, emails are never sent automatically. Check your Drafts folder.)');
+                        // Clear and close
+                        document.getElementById('composeTo').value = '';
+                        document.getElementById('composeSubject').value = '';
+                        document.getElementById('composeBody').value = '';
+                        document.getElementById('composeModal').style.display = 'none';
+                    } else {
+                        alert('❌ Error saving draft: ' + data.error);
+                    }
+                },
+                error: function() {
+                    alert('❌ Failed to save draft');
+                }
+            });
         }
 
         function deleteComposeDraft() {

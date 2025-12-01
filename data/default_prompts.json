@@ -6,7 +6,7 @@
   },
   "action_extraction": {
     "name": "Action Item Extraction",
-    "prompt": "You are an action item extraction assistant. Analyze the following email and extract all actionable tasks that require the recipient to do something.\n\nEmail Details:\nFrom: {sender}\nSubject: {subject}\nBody:\n{body}\n\nExtract each distinct action item with:\n- task: Clear description of what needs to be done\n- deadline: ISO date format (YYYY-MM-DD) or 'none' if not specified\n- priority: high/medium/low based on urgency indicators\n- context: Brief context or reference from the email\n\nRespond in JSON format:\n{\n  \"action_items\": [\n    {\n      \"task\": \"<task description>\",\n      \"deadline\": \"<YYYY-MM-DD or 'none'>\",\n      \"priority\": \"<high/medium/low>\",\n      \"context\": \"<relevant context>\"\n    }\n  ],\n  \"has_actions\": <true/false>\n}",
+    "prompt": "You are an action item extraction assistant. Analyze the following email and extract all actionable tasks that require the recipient to do something.\n\nEmail Details:\nFrom: {sender}\nSubject: {subject}\nBody:\n{body}\n\nExtract each distinct action item with:\n- task: Clear description of what needs to be done\n- deadline: ISO date format (YYYY-MM-DD) or 'none' if not specified\n- priority: high/medium/low based on urgency indicators\n- context: Brief context or reference from the email \n- \n\nRespond in JSON format:\n{\n  \"action_items\": [\n    {\n      \"task\": \"<task description>\",\n      \"deadline\": \"<YYYY-MM-DD or 'none'>\",\n      \"priority\": \"<high/medium/low>\",\n      \"context\": \"<relevant context>\"\n    }\n  ],\n  \"has_actions\": <true/false>\n}",
     "description": "Extracts actionable tasks, deadlines, and priorities from emails"
   },
   "auto_reply": {
