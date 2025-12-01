@@ -253,13 +253,13 @@ Return JSON format:
         Returns:
             Dict with generated reply and metadata
         """
-        # Get reply prompt from prompt manager
-        reply_prompt_data = self.prompt_manager.get_prompt("reply_generation")
+        # Get reply prompt from prompt manager (uses 'auto_reply' prompt)
+        reply_prompt_data = self.prompt_manager.get_prompt("auto_reply")
         
         if reply_prompt_data:
-            # Use user-defined prompt
+            # Use user-defined prompt from Custom Prompt page
             base_prompt = reply_prompt_data.get('prompt', '')
-            formatted_prompt = self.prompt_manager.format_prompt("reply_generation", email)
+            formatted_prompt = self.prompt_manager.format_prompt("auto_reply", email)
         else:
             # Fallback if no prompt defined
             formatted_prompt = f"""Generate a professional email reply.
