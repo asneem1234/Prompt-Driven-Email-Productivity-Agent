@@ -165,7 +165,8 @@ def starred():
                          emails=emails, 
                          folder_name='Starred',
                          folder_icon='star',
-                         folder_color='#f9ab00')
+                         folder_color='#f9ab00',
+                         is_sent=False)
 
 
 @app.route('/snoozed')
@@ -180,7 +181,8 @@ def snoozed():
                          emails=emails, 
                          folder_name='Snoozed',
                          folder_icon='schedule',
-                         folder_color='#1a73e8')
+                         folder_color='#1a73e8',
+                         is_sent=False)
 
 
 @app.route('/sent')
