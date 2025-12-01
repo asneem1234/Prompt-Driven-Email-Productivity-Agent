@@ -1,0 +1,54 @@
+[
+  {
+    "id": "sn001",
+    "sender": "reminder@calendar.com",
+    "sender_name": "Calendar Reminder",
+    "subject": "Follow up: Project Proposal",
+    "timestamp": "2025-12-02T09:00:00Z",
+    "body": "Reminder to follow up on the project proposal you sent last week. Check if the client has reviewed it.",
+    "read": true,
+    "starred": false,
+    "important": false,
+    "folder": "snoozed",
+    "snooze_until": "2025-12-02T09:00:00Z"
+  },
+  {
+    "id": "sn002",
+    "sender": "billing@netflix.com",
+    "sender_name": "Netflix",
+    "subject": "Your subscription renews in 3 days",
+    "timestamp": "2025-12-03T10:00:00Z",
+    "body": "Hi Asneem,\n\nYour Netflix subscription will automatically renew on December 6th, 2025.\n\nAmount: $15.99/month\n\nNo action needed if you wish to continue.\n\nNetflix Team",
+    "read": true,
+    "starred": false,
+    "important": false,
+    "folder": "snoozed",
+    "snooze_until": "2025-12-03T10:00:00Z"
+  },
+  {
+    "id": "sn003",
+    "sender": "library@university.edu",
+    "sender_name": "University Library",
+    "subject": "Book Return Reminder - Due Dec 5",
+    "timestamp": "2025-12-04T08:00:00Z",
+    "body": "Dear Student,\n\nThis is a reminder that the following book is due for return:\n\n- 'Machine Learning: A Probabilistic Perspective'\n\nDue Date: December 5, 2025\n\nPlease return or renew to avoid late fees.",
+    "read": false,
+    "starred": false,
+    "important": false,
+    "folder": "snoozed",
+    "snooze_until": "2025-12-04T08:00:00Z"
+  },
+  {
+    "id": "sn004",
+    "sender": "events@tech-conference.com",
+    "sender_name": "Tech Conference 2025",
+    "subject": "Early Bird Registration Ends Soon!",
+    "timestamp": "2025-12-05T12:00:00Z",
+    "body": "Don't miss out!\n\nEarly bird pricing for Tech Conference 2025 ends on December 10th.\n\nRegister now and save 40%!\n\nDate: January 15-17, 2025\nLocation: San Francisco, CA",
+    "read": true,
+    "starred": false,
+    "important": false,
+    "folder": "snoozed",
+    "snooze_until": "2025-12-05T12:00:00Z"
+  }
+]

@@ -55,15 +55,15 @@
                     <span class="material-icons">inbox</span>
                     <span class="nav-label">Inbox</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ url_for('starred') }}" class="nav-item {% if request.endpoint == 'starred' %}active{% endif %}">
                     <span class="material-icons">star_border</span>
                     <span class="nav-label">Starred</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ url_for('snoozed') }}" class="nav-item {% if request.endpoint == 'snoozed' %}active{% endif %}">
                     <span class="material-icons">schedule</span>
                     <span class="nav-label">Snoozed</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ url_for('sent') }}" class="nav-item {% if request.endpoint == 'sent' %}active{% endif %}">
                     <span class="material-icons">send</span>
                     <span class="nav-label">Sent</span>
                 </a>

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "s001",
+    "sender": "ceo@company.com",
+    "sender_name": "John CEO",
+    "subject": "Q4 Strategy Discussion - Important",
+    "timestamp": "2025-11-28T09:30:00Z",
+    "body": "Hi Team,\n\nI wanted to share some exciting updates about our Q4 strategy. We've exceeded our targets by 15% and I'd like to discuss the roadmap for next year.\n\nPlease block your calendars for a meeting next week.\n\nBest regards,\nJohn",
+    "read": true,
+    "starred": true,
+    "important": true,
+    "folder": "starred"
+  },
+  {
+    "id": "s002",
+    "sender": "professor@university.edu",
+    "sender_name": "Dr. Sarah Miller",
+    "subject": "Research Paper Feedback - Excellent Work!",
+    "timestamp": "2025-11-25T14:15:00Z",
+    "body": "Dear Asneem,\n\nI've reviewed your research paper and I'm impressed with the depth of analysis. Your work on AI-powered email systems is innovative.\n\nI'd like to recommend this for publication. Let's discuss further.\n\nBest,\nDr. Miller",
+    "read": true,
+    "starred": true,
+    "important": true,
+    "folder": "starred"
+  },
+  {
+    "id": "s003",
+    "sender": "internship@google.com",
+    "sender_name": "Google Recruiting",
+    "subject": "Interview Invitation - Software Engineering Intern",
+    "timestamp": "2025-11-20T11:00:00Z",
+    "body": "Dear Asneem,\n\nCongratulations! We were impressed by your application and would like to invite you for an interview for the Software Engineering Intern position.\n\nPlease select a time slot from the link below.\n\nBest regards,\nGoogle Recruiting Team",
+    "read": true,
+    "starred": true,
+    "important": true,
+    "folder": "starred"
+  },
+  {
+    "id": "s004",
+    "sender": "mom@family.com",
+    "sender_name": "Mom",
+    "subject": "Happy Birthday! 🎂",
+    "timestamp": "2025-11-15T00:01:00Z",
+    "body": "Happy Birthday my dear!\n\nWishing you all the success and happiness. So proud of everything you've achieved.\n\nLove you always,\nMom & Dad",
+    "read": true,
+    "starred": true,
+    "important": false,
+    "folder": "starred"
+  },
+  {
+    "id": "s005",
+    "sender": "hackathon@devpost.com",
+    "sender_name": "DevPost",
+    "subject": "🏆 Congratulations! You Won 2nd Place!",
+    "timestamp": "2025-11-10T18:00:00Z",
+    "body": "Congratulations!\n\nYour project 'AI Email Agent' has won 2nd place in the Global AI Hackathon!\n\nPrize: $5,000 + Mentorship Session\n\nWe'll be in touch with prize details soon.\n\nThe DevPost Team",
+    "read": true,
+    "starred": true,
+    "important": true,
+    "folder": "starred"
+  }
+]

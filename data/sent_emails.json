@@ -1,0 +1,68 @@
+[
+  {
+    "id": "sent001",
+    "to": "professor@university.edu",
+    "to_name": "Dr. Sarah Miller",
+    "subject": "Research Paper Submission - AI Email Agent",
+    "timestamp": "2025-11-29T16:30:00Z",
+    "body": "Dear Dr. Miller,\n\nPlease find attached my research paper on 'Prompt-Driven Email Productivity Using Large Language Models'.\n\nI've incorporated the feedback from our last discussion and added a new section on RAG implementation.\n\nLooking forward to your review.\n\nBest regards,\nAsneem Athar Shaik",
+    "read": true,
+    "starred": false,
+    "folder": "sent"
+  },
+  {
+    "id": "sent002",
+    "to": "hr@company.com",
+    "to_name": "HR Department",
+    "subject": "Re: Training Session Confirmation",
+    "timestamp": "2025-11-28T10:15:00Z",
+    "body": "Hi,\n\nThank you for the invitation. I confirm my attendance for the training session on December 3rd.\n\nPlease let me know if there's anything I need to prepare beforehand.\n\nBest regards,\nAsneem",
+    "read": true,
+    "starred": false,
+    "folder": "sent"
+  },
+  {
+    "id": "sent003",
+    "to": "team@project.com",
+    "to_name": "Project Team",
+    "subject": "Weekly Status Update - Sprint 23",
+    "timestamp": "2025-11-27T17:00:00Z",
+    "body": "Hi Team,\n\nHere's my weekly update:\n\n✅ Completed:\n- Implemented RAG system for email retrieval\n- Added color-coded categorization\n- Fixed rate limiting issues\n\n🔄 In Progress:\n- Custom prompt editor improvements\n- Draft management enhancements\n\n📋 Next Week:\n- User testing and feedback collection\n- Documentation updates\n\nLet me know if you have any questions.\n\nBest,\nAsneem",
+    "read": true,
+    "starred": true,
+    "folder": "sent"
+  },
+  {
+    "id": "sent004",
+    "to": "support@gemini.google.com",
+    "to_name": "Google AI Support",
+    "subject": "API Rate Limit Query",
+    "timestamp": "2025-11-26T14:20:00Z",
+    "body": "Hello,\n\nI'm developing an email productivity application using the Gemini API and experiencing rate limit issues on the free tier.\n\nCould you please clarify:\n1. What is the daily request limit?\n2. Is there a way to increase the quota for educational projects?\n\nThank you for your assistance.\n\nBest regards,\nAsneem Athar Shaik\nVIT-AP University",
+    "read": true,
+    "starred": false,
+    "folder": "sent"
+  },
+  {
+    "id": "sent005",
+    "to": "mom@family.com",
+    "to_name": "Mom",
+    "subject": "Re: Happy Birthday! 🎂",
+    "timestamp": "2025-11-15T08:30:00Z",
+    "body": "Thank you so much Mom and Dad! ❤️\n\nYour wishes mean everything to me. I'm so grateful for all your support.\n\nI'll call you later today!\n\nLove,\nAsneem",
+    "read": true,
+    "starred": true,
+    "folder": "sent"
+  },
+  {
+    "id": "sent006",
+    "to": "recruiter@microsoft.com",
+    "to_name": "Microsoft Recruiting",
+    "subject": "Application for Software Engineering Internship",
+    "timestamp": "2025-11-10T11:00:00Z",
+    "body": "Dear Hiring Manager,\n\nI am writing to express my interest in the Software Engineering Internship position at Microsoft.\n\nAs a B.Tech student at VIT-AP University specializing in AI/ML, I have developed several projects including an AI-powered email productivity agent.\n\nI have attached my resume and portfolio for your review.\n\nThank you for considering my application.\n\nBest regards,\nAsneem Athar Shaik",
+    "read": true,
+    "starred": false,
+    "folder": "sent"
+  }
+]

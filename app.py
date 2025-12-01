@@ -153,6 +153,52 @@ def inbox():
                          selected_email=instances.get('selected_email'))
 
 
+@app.route('/starred')
+def starred():
+    """Starred emails page"""
+    starred_file = "data/starred_emails.json"
+    emails = []
+    if os.path.exists(starred_file):
+        with open(starred_file, 'r', encoding='utf-8') as f:
+            emails = json.load(f)
+    return render_template('folder.html', 
+                         emails=emails, 
+                         folder_name='Starred',
+                         folder_icon='star',
+                         folder_color='#f9ab00')
+
+
+@app.route('/snoozed')
+def snoozed():
+    """Snoozed emails page"""
+    snoozed_file = "data/snoozed_emails.json"
+    emails = []
+    if os.path.exists(snoozed_file):
+        with open(snoozed_file, 'r', encoding='utf-8') as f:
+            emails = json.load(f)
+    return render_template('folder.html', 
+                         emails=emails, 
+                         folder_name='Snoozed',
+                         folder_icon='schedule',
+                         folder_color='#1a73e8')
+
+
+@app.route('/sent')
+def sent():
+    """Sent emails page"""
+    sent_file = "data/sent_emails.json"
+    emails = []
+    if os.path.exists(sent_file):
+        with open(sent_file, 'r', encoding='utf-8') as f:
+            emails = json.load(f)
+    return render_template('folder.html', 
+                         emails=emails, 
+                         folder_name='Sent',
+                         folder_icon='send',
+                         folder_color='#5f6368',
+                         is_sent=True)
+
+
 @app.route('/api/load-inbox', methods=['POST'])
 def load_inbox():
     """Load mock inbox from JSON file"""

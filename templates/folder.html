@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}{{ folder_name }} - Email Productivity Agent{% endblock %}
+
+{% block content %}
+<div class="inbox-toolbar">
+    <div class="toolbar-left">
+        <label class="checkbox-container">
+            <input type="checkbox" onclick="toggleSelectAll(this)">
+            <span class="checkmark"></span>
+        </label>
+        <button class="icon-btn toolbar-btn" onclick="refreshInbox()" title="Refresh">
+            <span class="material-icons">refresh</span>
+        </button>
+        <button class="icon-btn toolbar-btn" onclick="showMoreActions()" title="More">
+            <span class="material-icons">more_vert</span>
+        </button>
+    </div>
+    <div class="toolbar-right">
+        <span class="email-count">{{ emails|length }} {{ 'email' if emails|length == 1 else 'emails' }}</span>
+    </div>
+</div>
+
+<div class="folder-header" style="padding: 16px 24px; border-bottom: 1px solid #e8eaed;">
+    <h2 style="display: flex; align-items: center; gap: 12px; margin: 0; font-weight: 400;">
+        <span class="material-icons" style="color: {{ folder_color }}; font-size: 28px;">{{ folder_icon }}</span>
+        {{ folder_name }}
+    </h2>
+</div>
+
+{% if emails|length == 0 %}
+<div class="empty-state">
+    <span class="material-icons" style="font-size: 64px; color: #dadce0;">{{ folder_icon }}</span>
+    <h3>No {{ folder_name|lower }} emails</h3>
+    <p>Emails you {{ 'star' if folder_name == 'Starred' else ('snooze' if folder_name == 'Snoozed' else 'send') }} will appear here.</p>
+</div>
+{% else %}
+<div class="email-list">
+    {% for email in emails %}
+    <div class="email-row {% if not email.read %}unread{% endif %}">
+        <div class="email-select">
+            <label class="checkbox-container">
+                <input type="checkbox" class="email-checkbox">
+                <span class="checkmark"></span>
+            </label>
+        </div>
+        <div class="email-star">
+            <button class="icon-btn star-btn {% if email.starred %}starred{% endif %}" onclick="toggleStar(this, '{{ email.id }}')">
+                <span class="material-icons">{% if email.starred %}star{% else %}star_border{% endif %}</span>
+            </button>
+        </div>
+        <div class="email-important">
+            <button class="icon-btn" onclick="toggleImportant(this, '{{ email.id }}')">
+                <span class="material-icons" {% if email.important %}style="color: #f9ab00;"{% endif %}>label_important</span>
+            </button>
+        </div>
+        <div class="email-sender">
+            {% if is_sent %}
+                To: {{ email.to_name or email.to }}
+            {% else %}
+                {{ email.sender_name or email.sender }}
+            {% endif %}
+        </div>
+        <div class="email-content" onclick="viewEmailDetails('{{ email.id }}')">
+            <span class="email-subject">{{ email.subject }}</span>
+            <span class="email-preview"> - {{ email.body[:80] }}...</span>
+        </div>
+        {% if email.snooze_until %}
+        <div class="email-snooze-info">
+            <span class="material-icons" style="font-size: 16px; color: #1a73e8;">schedule</span>
+            <span style="font-size: 12px; color: #1a73e8;">{{ email.snooze_until[:10] }}</span>
+        </div>
+        {% endif %}
+        <div class="email-date">{{ email.timestamp[:10] }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Email Detail Modal -->
+<div id="emailDetailModal" class="email-detail-modal" style="display: none;">
+    <div class="email-detail-content">
+        <div class="email-detail-header">
+            <button class="icon-btn" onclick="closeEmailDetail()">
+                <span class="material-icons">arrow_back</span>
+            </button>
+            <div class="email-detail-actions">
+                <button class="icon-btn" title="Archive"><span class="material-icons">archive</span></button>
+                <button class="icon-btn" title="Delete"><span class="material-icons">delete</span></button>
+                <button class="icon-btn" title="Mark as unread"><span class="material-icons">mark_email_unread</span></button>
+            </div>
+        </div>
+        <div id="emailDetailBody" class="email-detail-body">
+            <!-- Content will be inserted here -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var emailsData = {{ emails | tojson | safe }};
+    var isSentFolder = {{ 'true' if is_sent else 'false' }};
+    
+    function viewEmailDetails(emailId) {
+        var email = emailsData.find(e => e.id === emailId);
+        if (!email) return;
+        
+        var senderInfo = isSentFolder ? 
+            `<strong>To:</strong> ${email.to_name || email.to}` :
+            `<strong>From:</strong> ${email.sender_name || email.sender}`;
+        
+        var html = `
+            <div class="email-full-header">
+                <h2>${email.subject}</h2>
+                <div class="email-meta">
+                    <p>${senderInfo}</p>
+                    <p><strong>Date:</strong> ${email.timestamp}</p>
+                </div>
+            </div>
+            <div class="email-full-body">
+                <pre style="white-space: pre-wrap; font-family: inherit;">${email.body}</pre>
+            </div>
+            <div class="email-actions-bar" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e8eaed;">
+                ${!isSentFolder ? `<button class="btn btn-primary" onclick="alert('Reply feature - use Generate Reply from Inbox')">
+                    <span class="material-icons">reply</span> Reply
+                </button>` : ''}
+                <button class="btn btn-secondary" onclick="closeEmailDetail()">
+                    <span class="material-icons">close</span> Close
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('emailDetailBody').innerHTML = html;
+        document.getElementById('emailDetailModal').style.display = 'block';
+    }
+    
+    function closeEmailDetail() {
+        document.getElementById('emailDetailModal').style.display = 'none';
+    }
+</script>
+{% endblock %}
