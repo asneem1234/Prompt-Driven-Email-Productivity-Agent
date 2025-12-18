@@ -194,23 +194,6 @@ def sent():
                          is_sent=True)
 
 
-@app.route('/api/load-inbox', methods=['POST'])
-def load_inbox():
-    """Load mock inbox from JSON file"""
-    instances = get_or_create_instances()
-    inbox_file = "data/mock_inbox.json"
-    
-    try:
-        if os.path.exists(inbox_file):
-            with open(inbox_file, 'r', encoding='utf-8') as f:
-                instances['inbox'] = json.load(f)
-            return jsonify({'success': True, 'count': len(instances['inbox'])})
-        else:
-            return jsonify({'success': False, 'error': 'Mock inbox file not found'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
-
 @app.route('/api/process-all', methods=['POST'])
 def process_all():
     """Process all emails in the inbox"""
