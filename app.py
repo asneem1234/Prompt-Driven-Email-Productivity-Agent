@@ -663,6 +663,60 @@ def save_draft():
     return jsonify({'success': True, 'draft': draft})
 
 
+@app.route('/api/search/sender/<sender>')
+def search_by_sender(sender):
+    """Search emails by sender name"""
+    instances = get_or_create_instances()
+    
+    try:
+        results = instances['email_agent'].rag_system.search_by_sender(sender)
+        return jsonify({'success': True, 'emails': results, 'count': len(results)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/search/keywords', methods=['POST'])
+def search_by_keywords():
+    """Search emails by keywords"""
+    instances = get_or_create_instances()
+    
+    data = request.json
+    keywords = data.get('keywords', [])
+    
+    if not keywords:
+        return jsonify({'success': False, 'error': 'No keywords provided'})
+    
+    try:
+        results = instances['email_agent'].rag_system.search_by_keywords(keywords)
+        return jsonify({'success': True, 'emails': results, 'count': len(results)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/emails/category/<category>')
+def get_emails_by_category(category):
+    """Get all emails in a specific category"""
+    instances = get_or_create_instances()
+    
+    try:
+        results = instances['email_processor'].get_emails_by_category(category)
+        return jsonify({'success': True, 'emails': results, 'count': len(results)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/action-items')
+def get_all_action_items():
+    """Get all action items across all emails"""
+    instances = get_or_create_instances()
+    
+    try:
+        results = instances['email_processor'].get_all_action_items()
+        return jsonify({'success': True, 'action_items': results, 'count': len(results)})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
 # For Vercel serverless deployment
 application = app
 
