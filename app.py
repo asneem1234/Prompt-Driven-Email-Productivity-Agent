@@ -2,7 +2,7 @@
 Flask UI for Email Productivity Agent
 Main application interface
 """
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import json
 import os
 import time
@@ -18,25 +18,19 @@ from src.email_agent import EmailAgent
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
 
-# Global instances (will be initialized per session)
-app_instances = {}
-
+# Global single instance (no sessions needed for demo app)
+app_instance = None
 
 
 def get_or_create_instances():
-    """Get or create application instances for the current session"""
-    session_id = session.get('session_id')
+    """Get or create application instances"""
+    global app_instance
     
-    if not session_id:
-        session_id = os.urandom(16).hex()
-        session['session_id'] = session_id
-    
-    if session_id not in app_instances:
+    if app_instance is None:
         api_key = os.environ.get('GEMINI_API_KEY', '')
         if api_key:
-            app_instances[session_id] = {
+            app_instance = {
                 'llm_client': LLMClient(),
                 'prompt_manager': PromptManager(),
                 'initialized': True,
@@ -47,32 +41,31 @@ def get_or_create_instances():
             }
             
             # Initialize components
-            instances = app_instances[session_id]
-            instances['email_processor'] = EmailProcessor(
-                instances['llm_client'],
-                instances['prompt_manager']
+            app_instance['email_processor'] = EmailProcessor(
+                app_instance['llm_client'],
+                app_instance['prompt_manager']
             )
-            instances['draft_manager'] = DraftManager(
-                instances['llm_client'],
-                instances['prompt_manager']
+            app_instance['draft_manager'] = DraftManager(
+                app_instance['llm_client'],
+                app_instance['prompt_manager']
             )
-            instances['email_agent'] = EmailAgent(
-                instances['llm_client'],
-                instances['email_processor'],
-                instances['prompt_manager']
+            app_instance['email_agent'] = EmailAgent(
+                app_instance['llm_client'],
+                app_instance['email_processor'],
+                app_instance['prompt_manager']
             )
             
             # Auto-load inbox from mock data
             inbox_file = "data/mock_inbox.json"
             if os.path.exists(inbox_file):
                 with open(inbox_file, 'r', encoding='utf-8') as f:
-                    instances['inbox'] = json.load(f)
+                    app_instance['inbox'] = json.load(f)
                 
                 # Index emails in RAG system immediately
-                instances['email_agent'].rag_system.index_emails(instances['inbox'])
-                print(f"🔍 RAG System initialized with {len(instances['inbox'])} emails")
+                app_instance['email_agent'].rag_system.index_emails(app_instance['inbox'])
+                print(f"🔍 RAG System initialized with {len(app_instance['inbox'])} emails")
         else:
-            app_instances[session_id] = {
+            app_instance = {
                 'initialized': False,
                 'inbox': [],
                 'processed_emails': {},
@@ -80,7 +73,7 @@ def get_or_create_instances():
                 'chat_history': []
             }
     
-    return app_instances[session_id]
+    return app_instance
 
 
 @app.route('/')
@@ -92,14 +85,14 @@ def index():
 @app.route('/setup', methods=['GET', 'POST'])
 def setup():
     """Setup page for API key"""
+    global app_instance
+    
     if request.method == 'POST':
         api_key = request.form.get('api_key')
         if api_key:
             os.environ['GEMINI_API_KEY'] = api_key
-            # Reset session to reinitialize
-            session_id = session.get('session_id')
-            if session_id and session_id in app_instances:
-                del app_instances[session_id]
+            # Reset instance to reinitialize with new key
+            app_instance = None
             return redirect(url_for('index'))
     
     return render_template('setup.html')
