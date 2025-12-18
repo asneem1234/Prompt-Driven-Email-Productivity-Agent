@@ -116,10 +116,10 @@ class LLMClient:
 ## 4. Constructor (__init__)
 
 ```python
-def __init__(self, model: str = "gemini-2.0-flash"):
+def __init__(self, model: str = "gemini-2.5-flash-lite"):
 ```
 > Constructor - runs when creating a new LLMClient.
-> - `model` = which Gemini model to use (default: gemini-2.0-flash)
+> - `model` = which Gemini model to use (default: gemini-2.5-flash-lite)
 > - Can be changed to use other models like "gemini-pro"
 
 ---
@@ -271,7 +271,7 @@ def call_llm(
                     "response": None,
                     "raw_response": None,
                     "prompt_used": prompt,
-                    "model": "gemini-2.0-flash",
+                    "model": "gemini-2.5-flash-lite",
                     "error": f"Response blocked (finish_reason: {finish_reason}). Try asking in a different way or with less context."
                 }
 ```
@@ -347,7 +347,7 @@ def call_llm(
                 "response": parsed_response,
                 "raw_response": raw_response,
                 "prompt_used": prompt,
-                "model": "gemini-2.0-flash",
+                "model": "gemini-2.5-flash-lite",
                 "error": None
             }
             
@@ -437,7 +437,7 @@ def call_llm(
                 "response": None,
                 "raw_response": None,
                 "prompt_used": prompt,
-                "model": "gemini-2.0-flash",
+                "model": "gemini-2.5-flash-lite",
                 "error": error_msg
             }
             
@@ -617,7 +617,7 @@ Connection Errors use: 2^n × 5 = 5s, 10s, 20s
   },
   "raw_response": "{\"category\": \"Urgent\", ...}",
   "prompt_used": "Categorize this email...",
-  "model": "gemini-2.0-flash",
+  "model": "gemini-2.5-flash-lite",
   "error": null
 }
 ```
@@ -629,7 +629,7 @@ Connection Errors use: 2^n × 5 = 5s, 10s, 20s
   "response": null,
   "raw_response": null,
   "prompt_used": "Categorize this email...",
-  "model": "gemini-2.0-flash",
+  "model": "gemini-2.5-flash-lite",
   "error": "⚠️ Rate limit exceeded. Gemini free tier allows 15 requests/minute..."
 }
 ```
@@ -641,7 +641,7 @@ Connection Errors use: 2^n × 5 = 5s, 10s, 20s
   "response": null,
   "raw_response": null,
   "prompt_used": "...",
-  "model": "gemini-2.0-flash",
+  "model": "gemini-2.5-flash-lite",
   "error": "Response blocked (finish_reason: SAFETY). Try asking in a different way..."
 }
 ```

@@ -104,7 +104,7 @@ The Prompt-Driven Email Productivity Agent is an AI-powered email management sys
 │  │         JSON Files (data/)       │    │      External API              │  │
 │  │  ┌───────────────────────────┐  │    │  ┌──────────────────────────┐  │  │
 │  │  │  mock_inbox.json          │  │    │  │   Google Gemini API      │  │  │
-│  │  │  drafts.json              │  │    │  │   (gemini-2.0-flash)     │  │  │
+│  │  │  drafts.json              │  │    │  │   (gemini-2.5-flash-lite)     │  │  │
 │  │  │  default_prompts.json     │  │    │  │                          │  │  │
 │  │  │  starred_emails.json      │  │    │  │   Rate: 15 req/min       │  │  │
 │  │  │  snoozed_emails.json      │  │    │  │   Tokens: 1000 max       │  │  │
@@ -123,7 +123,7 @@ The Prompt-Driven Email Productivity Agent is an AI-powered email management sys
 | Component | Technology | Purpose |
 |-----------|------------|---------|
 | Web Framework | Flask 3.0 | HTTP server, routing, sessions |
-| AI Model | Google Gemini 2.0 Flash | Email categorization, replies, chat |
+| AI Model | Google Gemini 2.5 Flash Lite | Email categorization, replies, chat |
 | Template Engine | Jinja2 | HTML rendering |
 | Environment | python-dotenv | API key management |
 | Math Operations | NumPy 1.24 | Vector operations for RAG |
@@ -159,7 +159,7 @@ The Prompt-Driven Email Productivity Agent is an AI-powered email management sys
 │  - model: GenerativeModel               │
 │  - call_history: List[Dict]             │
 ├─────────────────────────────────────────┤
-│  + __init__(model="gemini-2.0-flash")   │
+│  + __init__(model="gemini-2.5-flash-lite")   │
 │  + call_llm(prompt, temp, tokens, json) │
 │  + get_call_history()                   │
 │  + clear_history()                      │
@@ -684,7 +684,7 @@ User          Flask         EmailAgent      RAGSystem       LLMClient      Gemin
 
 | Optimization | Implementation |
 |--------------|----------------|
-| Fast Categorization | Separate `gemini-2.0-flash` model for bulk processing |
+| Fast Categorization | Separate `gemini-2.5-flash-lite` model for bulk processing |
 | Rate Limit Protection | 4-second delay between API calls |
 | Lazy Loading | RAG indexes only when first query is made |
 | Response Caching | Processed emails stored in memory |

@@ -10,7 +10,7 @@ An intelligent AI-powered email management system that categorizes emails, extra
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)](https://flask.palletsprojects.com/)
-[![Google Gemini](https://img.shields.io/badge/Gemini-2.0--Flash-orange.svg)](https://ai.google.dev/)
+[![Google Gemini](https://img.shields.io/badge/Gemini-2.5--Flash--Lite-orange.svg)](https://ai.google.dev/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 🎯 Features

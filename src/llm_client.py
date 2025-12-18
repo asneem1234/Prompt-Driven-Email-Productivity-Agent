@@ -29,9 +29,9 @@ class LLMClient:
     """Handles all LLM interactions with structured prompt/response logging"""
     # This class is the main wrapper for talking to Gemini AI
     
-    def __init__(self, model: str = "gemini-2.5-flash"):
+    def __init__(self, model: str = "gemini-2.5-flash-lite"):
         # Constructor - runs when we create a new LLMClient object
-        # model parameter lets us choose which Gemini model to use (default is gemini-2.5-flash)
+        # model parameter lets us choose which Gemini model to use (default is gemini-2.5-flash-lite)
         
         self.api_key = os.getenv("GEMINI_API_KEY")
         # Get the API key from environment variables (stored in .env file)
@@ -117,7 +117,7 @@ class LLMClient:
                         "response": None,
                         "raw_response": None,
                         "prompt_used": prompt,
-                        "model": "gemini-2.5-flash",
+                        "model": "gemini-2.5-flash-lite",
                         "error": f"Response blocked (finish_reason: {finish_reason}). Try asking in a different way or with less context."
                     }
                     # Return an error result explaining the response was blocked
@@ -159,7 +159,7 @@ class LLMClient:
                     # The original text from the AI (before parsing)
                     "prompt_used": prompt,
                     # The prompt we sent (useful for debugging)
-                    "model": "gemini-2.5-flash",
+                    "model": "gemini-2.5-flash-lite",
                     # Which model we used
                     "error": None
                     # No error since it succeeded
@@ -236,7 +236,7 @@ class LLMClient:
                     "response": None,
                     "raw_response": None,
                     "prompt_used": prompt,
-                    "model": "gemini-2.5-flash",
+                    "model": "gemini-2.5-flash-lite",
                     "error": error_msg
                     # Include the error message so caller knows what went wrong
                 }

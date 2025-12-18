@@ -155,7 +155,7 @@ def __init__(self, llm_client: LLMClient, prompt_manager: PromptManager):
 ---
 
 ```python
-    self.fast_model = genai.GenerativeModel("gemini-2.0-flash")
+    self.fast_model = genai.GenerativeModel("gemini-2.5-flash-lite")
 ```
 > Create a separate "fast model" for categorization.
 > 
@@ -298,7 +298,7 @@ def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
 ---
 
 ```python
-    # Use Gemini 2.5 Flash for categorization with retry logic
+    # Use Gemini 2.5 Flash Lite for categorization with retry logic
     max_retries = 2
 ```
 > Allow up to 2 retry attempts if something fails.
@@ -347,7 +347,7 @@ def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
                     "success": False,
                     "response": {"category": "Other", "confidence": 0.5, "reasoning": "Content filtered"},
                     "error": "Content filtered by safety",
-                    "model": "gemini-2.0-flash"
+                    "model": "gemini-2.5-flash-lite"
                 }
 ```
 > If Google's safety filters blocked the response, return a default "Other" category.
@@ -415,7 +415,7 @@ def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
                 "success": True,
                 "response": parsed_response,
                 "raw_response": raw_response,
-                "model": "gemini-2.0-flash"
+                "model": "gemini-2.5-flash-lite"
             }
 ```
 > Return successful result with the parsed category data.
@@ -467,7 +467,7 @@ def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
                         "success": False,
                         "response": {"category": "Other", "confidence": 0.0, "reasoning": "Daily quota exhausted"},
                         "error": "QUOTA_EXHAUSTED",
-                        "model": "gemini-2.0-flash"
+                        "model": "gemini-2.5-flash-lite"
                     }
 ```
 > If we've used all retries or it's a daily quota issue, return special error.
@@ -482,7 +482,7 @@ def categorize_email(self, email: Dict[str, Any]) -> Dict[str, Any]:
                 "success": False,
                 "response": {"category": "Other", "confidence": 0.0, "reasoning": "Error: " + str(e)},
                 "error": str(e),
-                "model": "gemini-2.0-flash"
+                "model": "gemini-2.5-flash-lite"
             }
 ```
 > For any other error, return a default "Other" category with the error message.
@@ -775,7 +775,7 @@ def get_all_action_items(self) -> List[Dict[str, Any]]:
 │                                                                  │
 │  ┌─────────────────────────┐  ┌─────────────────────────────┐   │
 │  │     fast_model          │  │        llm_client           │   │
-│  │  (gemini-2.0-flash)     │  │     (gemini-2.0-flash)      │   │
+│  │  (gemini-2.5-flash-lite)     │  │     (gemini-2.5-flash-lite)      │   │
 │  ├─────────────────────────┤  ├─────────────────────────────┤   │
 │  │ Used for:               │  │ Used for:                   │   │
 │  │ • Categorization only   │  │ • Action extraction         │   │
